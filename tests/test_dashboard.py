@@ -154,3 +154,11 @@ def test_ui_badge_formatting():
     alert_false = format_alert_badge(False)
     assert "SAFE" in alert_false
     assert "cg-badge-alert-false" in alert_false
+
+
+def test_empty_conversation_history(mock_repo):
+    """Verify querying non-existent conversation history returns empty list without error."""
+    history = mock_repo.get_assessment_history("non_existent_conv_xyz")
+    assert history == []
+    meta = mock_repo.get_conversation("non_existent_conv_xyz")
+    assert meta is None

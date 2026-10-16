@@ -204,7 +204,7 @@ The persistence architecture consists of four distinct collections:
 ### Why Review History Is Separate From Current Review Record
 
 Moderation platforms operate in an adversarial and regulatory environment where decisions may be revised upon appeal, escalation, or peer review. 
-1. **Current State Query Efficiency**: Real-time moderation queues and dashboard panels query `moderator_reviews` directly by `review_status` (e.g., finding all `IN_REVIEW` or `PENDING` tickets) without scanning historical logs.
+1. **Current State Query Efficiency**: Interactive moderation queues and dashboard panels query `moderator_reviews` directly by `review_status` (e.g., finding all `IN_REVIEW` or `PENDING` tickets) without scanning historical logs.
 2. **Tamper-Evident Auditability**: `review_events` is strictly append-only. The application exposes no update or delete primitives for review events. When a moderator adjusts a decision (e.g., from `NO_ACTION` to `WARN_USER`), the event log retains both the previous and new states, timestamp, and actor ID.
 3. **Atomicity and Failure Recovery**: On standalone MongoDB nodes (without a replica set), multi-document ACID transactions are not available. State transitions sequentially update `moderator_reviews` and append to `review_events`. In high-availability environments running a replica set, operations can execute within transactional sessions (`client.start_session()`).
 
@@ -369,14 +369,13 @@ flowchart TD
 ### Core Views & Workflows
 
 1. **System Overview (`Overview`):**
-   - Displays real-time database connection status badge (`mongodb://127.0.0.1:27018`).
-   - Four core operational KPIs: Total Conversations, Risk Assessments, Active Reviews, Derailment Alerts.
-   - Two compact charts: Total Alerts by Observation Checkpoint and Moderator Reviews by Current Status.
+   - Displays database connection status badge (`mongodb://127.0.0.1:27018`).
+   - Four core operational KPIs: Total Conversations, Risk Assessments, Active Reviews, Personal-Attack Alerts.
+   - Two compact charts: Personal-Attack Alerts by Observation Checkpoint and Moderator Reviews by Current Status.
 2. **Assess Conversation (`Assess Conversation`):**
    - Interactive submission form for conversation prefixes at checkpoints $n \in \{1, 3, 5\}$ for horizon $H = 3$.
-   - Quick-fill presets (`Escalating Dialogue` and `Constructive Dialogue`).
    - Executes inference using the validation-selected model bundle and persists the assessment to MongoDB.
-   - Renders alert banners (Red ⚠️ ALERT / Teal ✓ NOMINAL), model metrics, and turn-by-turn conversational tone signals table.
+   - Renders alert banners (Red ⚠️ ALERT / Teal ✓ NOMINAL), uncalibrated model score, validation-selected threshold, and turn-by-turn conversational tone signals table.
    - Direct button handoff to create or update a review in the moderator panel.
 3. **Assessment History (`Assessment History`):**
    - Search by Conversation ID or select from recent monitored threads.
@@ -384,8 +383,8 @@ flowchart TD
    - Chronological table of all risk evaluations, expandable observed messages, and heuristic signals.
 4. **Moderator Review & Decision Audit (`Moderator Review`):**
    - Queue of recent assessments with alert status indicators.
-   - Full assessment context (checkpoint, model family, risk score vs. threshold, observed messages).
-   - Form to submit moderation decisions (`DISMISS`, `ESCALATE`, `WARN_USER`, `DELETE_MESSAGE`, `LOCK_THREAD`, etc.) and transitions (`PENDING`, `IN_REVIEW`, `RESOLVED`, `DISMISSED`).
+   - Full assessment context (checkpoint, model family, uncalibrated model score vs. validation threshold, observed messages).
+   - Form to record moderation decisions (e.g., `DISMISS`, `ESCALATE`, `WARN_USER`, `DELETE_MESSAGE`, `LOCK_THREAD`) and transitions (`PENDING`, `IN_REVIEW`, `RESOLVED`, `DISMISSED`). Decisions update internal audit records and do not execute external actions.
    - Immutable, append-only chronological audit log of all historical review actions with actor stamps, previous/new states, and moderator notes.
 5. **Database Analytics (`Analytics`):**
    - Checkpoint alert breakdown table and bar chart.
@@ -393,6 +392,7 @@ flowchart TD
 
 ### Operational Constraints & Limitations
 
-- **Uncalibrated Model Risk Scores:** Raw scores produced by the classifiers reflect logistic decision boundary distances and are thresholded at validation-frozen optimal values ($\tau$). They are not calibrated probabilities.
+- **Uncalibrated Model Scores:** Model scores reflect uncalibrated statistical classifier outputs and are compared against validation-selected optimal thresholds ($\tau$). They are not calibrated probabilities.
+- **Internal Recorded Decisions:** Decisions submitted in the dashboard update internal MongoDB audit records. The platform does not execute automated or external actions on third-party platforms without dedicated integration.
 - **Single-Tenant / Local Review:** The dashboard is structured for local moderator review or internal VPN deployment. For production multi-tenant environments, reverse proxy authentication (e.g., OAuth2-proxy / SSO) must front the Streamlit service.
 - **Audit Immutability:** The `review_events` collection is append-only by system policy. Moderator actions record new events rather than overwriting previous entries.

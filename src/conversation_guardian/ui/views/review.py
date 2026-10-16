@@ -24,7 +24,8 @@ from conversation_guardian.ui.components import render_alert_banner
 
 def render_review_view(repo: ConversationGuardianRepository):
     st.subheader("Moderator Decision & Audit Trail")
-    st.markdown("Evaluate flagged assessments, execute moderation decisions, and review immutable audit event logs.")
+    st.markdown("Evaluate flagged assessments, record moderation decisions, and inspect immutable audit event logs.")
+    st.caption("Note: Decisions recorded here update internal audit records for review tracking. The dashboard does not execute actions on external platforms.")
 
     # 1. Select assessment
     recent_asmts = []
@@ -96,7 +97,7 @@ def render_review_view(repo: ConversationGuardianRepository):
     col_c1.metric("Conversation ID", asmt.get("conversation_id", "-"))
     col_c2.metric("Checkpoint turns", f"n = {asmt.get('checkpoint_n_obs', '-')}")
     col_c3.metric("Model Architecture", asmt.get("model_family", "-"))
-    col_c4.metric("Risk Score", f"{asmt.get('risk_score', 0.0):.4f}")
+    col_c4.metric("Uncalibrated Model Score", f"{asmt.get('risk_score', 0.0):.4f}")
 
     with st.expander("View Observed Dialogue Turns for This Assessment", expanded=False):
         for idx, turn_txt in enumerate(asmt.get("observed_messages", []), 1):
@@ -161,7 +162,7 @@ def render_review_view(repo: ConversationGuardianRepository):
                 default_dec_idx = decision_options.index("NO_ACTION")
 
             new_decision = st.selectbox(
-                "Moderator Action Decision",
+                "Recorded Moderator Decision",
                 options=decision_options,
                 index=default_dec_idx,
             )
@@ -169,11 +170,11 @@ def render_review_view(repo: ConversationGuardianRepository):
         comment = st.text_area(
             "Review Notes & Decision Justification",
             value="",
-            placeholder="Explain the rationale for this status update or disciplinary action...",
+            placeholder="Explain the rationale for this recorded status update or decision...",
             height=80,
         )
 
-        submitted = st.form_submit_button("Record Moderator Action", type="primary")
+        submitted = st.form_submit_button("Record Moderator Decision", type="primary")
 
     if submitted:
         if not reviewer_id.strip():
@@ -189,12 +190,12 @@ def render_review_view(repo: ConversationGuardianRepository):
                     comment=comment.strip(),
                 )
                 st.success(
-                    f"Successfully recorded review action: Status -> {updated_rev['review_status']}, "
+                    f"Successfully recorded review decision: Status -> {updated_rev['review_status']}, "
                     f"Decision -> {updated_rev['decision']}. Audit event appended."
                 )
                 st.rerun()
             except Exception as exc:
-                st.error(f"Failed to record moderator action: {str(exc)}")
+                st.error(f"Failed to record moderator decision: {str(exc)}")
 
     # 5. Append-only Audit Event History
     st.markdown("---")

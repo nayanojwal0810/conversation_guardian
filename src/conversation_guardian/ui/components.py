@@ -16,7 +16,7 @@ def render_header(endpoint: str = "mongodb://127.0.0.1:27018", is_connected: boo
     <div class="cg-header">
         <div>
             <h1>ConversationGuardian</h1>
-            <p>Early Derailment Forecasting & Moderator Audit Platform</p>
+            <p>Early Personal-Attack Forecasting & Moderator Audit Platform</p>
         </div>
         <div class="cg-header-status">
             <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:{status_color};"></span>
@@ -47,8 +47,8 @@ def render_alert_banner(alert: bool, risk_score: float, threshold: float, checkp
         <div class="cg-alert-banner cg-alert-danger">
             <span style="font-size:1.2rem;">⚠️</span>
             <div>
-                <strong>HIGH DERAILMENT RISK ALERT RAISED</strong> &mdash; 
-                Risk score of <strong>{risk_score:.4f}</strong> meets or exceeds the frozen validation decision threshold of <strong>{threshold:.4f}</strong> at checkpoint n={checkpoint}.
+                <strong>PERSONAL-ATTACK FORECAST ALERT RAISED</strong> &mdash; 
+                Uncalibrated model score of <strong>{risk_score:.4f}</strong> meets or exceeds the validation-selected decision threshold of <strong>{threshold:.4f}</strong> at checkpoint n={checkpoint}.
             </div>
         </div>
         """
@@ -58,7 +58,7 @@ def render_alert_banner(alert: bool, risk_score: float, threshold: float, checkp
             <span style="font-size:1.2rem;">✓</span>
             <div>
                 <strong>NOMINAL (NO ALERT)</strong> &mdash; 
-                Risk score of <strong>{risk_score:.4f}</strong> is below the validation threshold of <strong>{threshold:.4f}</strong> at checkpoint n={checkpoint}.
+                Uncalibrated model score of <strong>{risk_score:.4f}</strong> is below the validation-selected threshold of <strong>{threshold:.4f}</strong> at checkpoint n={checkpoint}.
             </div>
         </div>
         """
@@ -71,9 +71,11 @@ def render_uncalibrated_disclaimer():
         """
         <div class="cg-disclaimer">
             <strong>Model Score Advisory:</strong> 
-            The reported risk score is an uncalibrated statistical model output from a validation-selected classifier, 
-            <strong>not</strong> an empirical real-world probability. Predictions serve as an automated triage advisory 
-            for human moderator review. No automated punitive moderation action is triggered without human evaluation.
+            The reported score is an uncalibrated model score from a validation-selected classifier, 
+            <strong>not</strong> a calibrated probability. The classification threshold was selected using validation 
+            data to optimize early forecasting utility. Predictions serve as an automated triage advisory 
+            for human moderator review. Recorded decisions update internal audit logs and do not execute actions 
+            on external chat platforms without a dedicated platform integration.
         </div>
         """,
         unsafe_allow_html=True,

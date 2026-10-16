@@ -15,7 +15,7 @@ from conversation_guardian.ui.components import render_signals_table, render_ale
 
 def render_history_view(repo: ConversationGuardianRepository):
     st.subheader("Conversation Assessment History")
-    st.markdown("Inspect the chronological sequence of risk evaluations generated for any monitored discussion thread.")
+    st.markdown("Inspect the chronological sequence of personal-attack risk evaluations generated for any monitored discussion thread.")
 
     # 1. Fetch recent conversations for quick selection
     recent_convs = []
@@ -85,9 +85,9 @@ def render_history_view(repo: ConversationGuardianRepository):
             "Assessment ID": h["assessment_id"],
             "Observed Checkpoint": f"n = {h['checkpoint_n_obs']} turns",
             "Created Timestamp": created_str,
-            "Risk Score": f"{h['risk_score']:.4f}",
-            "Threshold": f"{h['decision_threshold']:.4f}",
-            "Alert Decision": "⚠️ ALERT" if h["alert"] else "✓ Safe",
+            "Uncalibrated Model Score": f"{h['risk_score']:.4f}",
+            "Validation Threshold": f"{h['decision_threshold']:.4f}",
+            "Personal-Attack Alert": "⚠️ ALERT" if h["alert"] else "✓ Safe",
             "Model Family": h.get("model_family", "-"),
         })
 
@@ -124,6 +124,6 @@ def render_history_view(repo: ConversationGuardianRepository):
 
         st.markdown("<div style='height: 0.5rem;'></div>", unsafe_allow_html=True)
         if st.button("Open This Assessment in Moderator Review", key="btn_history_to_review"):
-            st.session_state["active_tab"] = "Moderator Review"
+            st.session_state["target_tab"] = "Moderator Review"
             st.session_state["selected_assessment_id"] = selected_doc["assessment_id"]
             st.rerun()

@@ -103,7 +103,10 @@ def main():
         "Analytics",
     ]
 
-    # Handle navigation state
+    # Handle navigation state and programmatic redirects
+    if "target_tab" in st.session_state:
+        st.session_state["active_tab"] = st.session_state.pop("target_tab")
+
     if "active_tab" not in st.session_state:
         st.session_state["active_tab"] = "Overview"
 
@@ -124,7 +127,8 @@ def main():
                 <strong>n=1:</strong> Hybrid LogReg (&tau; = 0.15)<br>
                 <strong>n=3:</strong> Hybrid LogReg (&tau; = 0.27)<br>
                 <strong>n=5:</strong> AggregateState LogReg (&tau; = 0.42)<br>
-                <strong>Horizon:</strong> H = 3 dialogue turns
+                <strong>Horizon:</strong> H = 3 dialogue turns<br>
+                <span style="font-size: 0.72rem; color: #64748B;">Decision thresholds (&tau;) selected strictly on validation data.</span>
             </div>
             """,
             unsafe_allow_html=True,

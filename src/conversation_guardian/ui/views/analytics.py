@@ -32,7 +32,7 @@ def render_analytics_view(repo: ConversationGuardianRepository):
     col1, col2 = st.columns(2)
 
     with col1:
-        st.markdown("#### Alert Frequency by Checkpoint")
+        st.markdown("#### Personal-Attack Alerts by Checkpoint")
         ckpt_counts = {1: {"total": 0, "alerts": 0}, 3: {"total": 0, "alerts": 0}, 5: {"total": 0, "alerts": 0}}
         for a in recent_asmts:
             c = a.get("checkpoint_n_obs")
@@ -49,7 +49,7 @@ def render_analytics_view(repo: ConversationGuardianRepository):
             rows.append({
                 "Checkpoint": f"n = {c}",
                 "Evaluated": tot,
-                "Alerts Raised": alt_cnt,
+                "Personal-Attack Alerts": alt_cnt,
                 "Alert Rate": f"{rate:.1f}%",
             })
 
@@ -62,8 +62,8 @@ def render_analytics_view(repo: ConversationGuardianRepository):
                 .mark_bar(color="#0D9488", cornerRadiusTopLeft=4, cornerRadiusTopRight=4)
                 .encode(
                     x=alt.X("Checkpoint:N", axis=alt.Axis(labelAngle=0)),
-                    y=alt.Y("Alerts Raised:Q"),
-                    tooltip=["Checkpoint", "Evaluated", "Alerts Raised", "Alert Rate"],
+                    y=alt.Y("Personal-Attack Alerts:Q", title="Personal-Attack Alerts"),
+                    tooltip=["Checkpoint", "Evaluated", "Personal-Attack Alerts", "Alert Rate"],
                 )
                 .properties(height=220)
             )

@@ -30,11 +30,19 @@ def run():
         print("[2/5] Navigating to Assess Conversation view...")
         select_nav(page, "Assess Conversation")
         time.sleep(2)
+        # Fill in conversation details
+        page.locator("input[aria-label='Conversation Identifier']").fill("conv_wikipedia_talk_948")
+        page.locator("textarea[aria-label='Turn 1']").fill("I disagree with your removal of the citations on the main article.")
+        page.locator("textarea[aria-label='Turn 2']").fill("Your sources fail WP:RS and you keep reverting edits without discussing.")
+        page.locator("textarea[aria-label='Turn 3']").fill("Stop being completely incompetent and learn how policies actually work here.")
         # Click Run Risk Assessment
         page.locator("button:has-text('Run Risk Assessment')").click()
         time.sleep(3)
         # Scroll to view the generated risk assessment banner and signals table
-        page.evaluate("window.scrollTo(0, 480)")
+        try:
+            page.locator(".cg-alert-banner, .cg-nominal-banner").first.scroll_into_view_if_needed()
+        except Exception:
+            page.evaluate("document.querySelector('section.main').scrollTop = 600")
         time.sleep(1)
         page.screenshot(path=str(OUTPUT_DIR / "assess.png"))
         print("  -> Saved assess.png")
@@ -42,14 +50,21 @@ def run():
         print("[3/5] Navigating to Assessment History view...")
         select_nav(page, "Assessment History")
         page.evaluate("window.scrollTo(0, 0)")
-        time.sleep(2)
+        time.sleep(3)
         page.screenshot(path=str(OUTPUT_DIR / "history.png"))
         print("  -> Saved history.png")
 
         print("[4/5] Navigating to Moderator Review view...")
         select_nav(page, "Moderator Review")
         page.evaluate("window.scrollTo(0, 0)")
-        time.sleep(3)
+        time.sleep(2)
+        try:
+            # Type an assessment ID into the manual ID input so no dropdown popover stays open
+            page.locator("input[aria-label='Or Enter Assessment ID']").fill("asmt_b9870e97bdf8")
+            page.keyboard.press("Enter")
+            time.sleep(2)
+        except Exception as e:
+            print(f"  (Manual ID entry fallback: {e})")
         page.screenshot(path=str(OUTPUT_DIR / "review.png"))
         print("  -> Saved review.png")
 

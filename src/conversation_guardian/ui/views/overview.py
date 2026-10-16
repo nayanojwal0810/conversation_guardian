@@ -32,7 +32,7 @@ def render_overview_view(repo: ConversationGuardianRepository):
     render_kpi(col1, "Total Conversations", metrics.get("total_conversations", 0), "Tracked discussion threads")
     render_kpi(col2, "Risk Assessments", metrics.get("total_assessments", 0), "Evaluated observation checkpoints")
     render_kpi(col3, "Active Reviews", metrics.get("active_reviews", 0), "Pending or In-Review tickets")
-    render_kpi(col4, "Derailment Alerts", metrics.get("total_alerts", 0), "High-risk threshold exceedances")
+    render_kpi(col4, "Personal-Attack Alerts", metrics.get("total_alerts", 0), "Validation threshold exceedances")
 
     st.markdown("<div style='height: 1.5rem;'></div>", unsafe_allow_html=True)
 
@@ -40,7 +40,7 @@ def render_overview_view(repo: ConversationGuardianRepository):
     chart_col1, chart_col2 = st.columns(2)
 
     with chart_col1:
-        st.markdown("**Alerts by Observation Checkpoint (H=3)**")
+        st.markdown("**Personal-Attack Alerts by Observation Checkpoint (H=3)**")
         # Ensure all checkpoints (1, 3, 5) appear even if count is 0
         ckpt_map = {1: 0, 3: 0, 5: 0}
         for item in alerts_by_ckpt:
@@ -54,14 +54,14 @@ def render_overview_view(repo: ConversationGuardianRepository):
         ])
 
         if df_ckpt["Alerts"].sum() == 0:
-            st.info("No derailment alerts currently recorded in the database.")
+            st.info("No personal-attack alerts currently recorded in the database.")
         else:
             chart1 = (
                 alt.Chart(df_ckpt)
                 .mark_bar(cornerRadiusTopLeft=4, cornerRadiusTopRight=4, color="#0D9488")
                 .encode(
                     x=alt.X("Checkpoint:N", axis=alt.Axis(labelAngle=0, title=None)),
-                    y=alt.Y("Alerts:Q", axis=alt.Axis(tickMinStep=1, title="Total Alerts")),
+                    y=alt.Y("Alerts:Q", axis=alt.Axis(tickMinStep=1, title="Personal-Attack Alerts")),
                     tooltip=["Checkpoint", "Alerts"],
                 )
                 .properties(height=240)
