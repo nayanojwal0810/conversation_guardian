@@ -14,8 +14,17 @@ REASON_ATTACK_ALREADY_OBSERVED = "ATTACK_ALREADY_OBSERVED"
 REASON_CENSORED_INCOMPLETE_WINDOW = "CENSORED_INCOMPLETE_WINDOW"
 REASON_INSUFFICIENT_OBSERVED_PREFIX = "INSUFFICIENT_OBSERVED_PREFIX"
 
-# Feature column whitelist strictly allowed for model inputs
-FEATURE_COLUMN_WHITELIST = frozenset([
+# Approved direct model-input predictor columns permitted for downstream model consumption
+MODEL_INPUT_ALLOWLIST = frozenset([
+    "observed_prefix_text",
+])
+
+# For backward compatibility, alias FEATURE_COLUMN_WHITELIST to the exact model input allowlist
+FEATURE_COLUMN_WHITELIST = MODEL_INPUT_ALLOWLIST
+
+# Metadata columns retained for tracking, joins, partitioning, or offline debugging,
+# but NEVER passed as direct model predictors.
+METADATA_COLUMNS = frozenset([
     "example_id",
     "conversation_id",
     "pair_id",
@@ -23,13 +32,16 @@ FEATURE_COLUMN_WHITELIST = frozenset([
     "checkpoint_n_obs",
     "horizon_h",
     "observed_prefix_length",
-    "observed_prefix_text",
     "observed_utterance_ids",
     "observed_speakers",
     "observed_timestamps",
+    "total_conversation_length_raw",
+    "total_dialogue_length_filtered",
+    "future_messages_available",
+    "dataset_version",
 ])
 
-# Forbidden columns that MUST NOT be used in model feature representations
+# Forbidden audit / ground truth target columns strictly prohibited from model features
 FORBIDDEN_AUDIT_COLUMNS = frozenset([
     "target_label",
     "eligibility_status",
@@ -37,9 +49,6 @@ FORBIDDEN_AUDIT_COLUMNS = frozenset([
     "has_attack_in_conversation",
     "first_attack_pos",
     "first_attack_utterance_id",
-    "total_conversation_length_raw",
-    "total_dialogue_length_filtered",
-    "future_messages_available",
     "censoring_reason",
 ])
 
@@ -74,7 +83,7 @@ class ConversationRecord:
 @dataclass
 class EventExample:
     """An event forecasting observation example at a fixed checkpoint."""
-    # Model inputs (whitelisted)
+    # Tracking identifiers and metadata
     example_id: str
     conversation_id: str
     pair_id: str
@@ -99,8 +108,37 @@ class EventExample:
     future_messages_available: int
     dataset_version: str = "1.0.0-gate1"
 
+    def to_feature_dict(self) -> Dict[str, Any]:
+        """
+        Return exclusively the exact approved direct model-input predictor fields.
+        Identifiers, split names, timestamps, speaker identities, future metrics,
+        and target labels are strictly excluded.
+        """
+        return {
+            "observed_prefix_text": self.observed_prefix_text,
+        }
+
+    def to_metadata_dict(self) -> Dict[str, Any]:
+        """Return tracking identifiers and metadata without target labels."""
+        return {
+            "example_id": self.example_id,
+            "conversation_id": self.conversation_id,
+            "pair_id": self.pair_id,
+            "split": self.split,
+            "checkpoint_n_obs": self.checkpoint_n_obs,
+            "horizon_h": self.horizon_h,
+            "observed_prefix_length": self.observed_prefix_length,
+            "observed_utterance_ids": self.observed_utterance_ids,
+            "observed_speakers": self.observed_speakers,
+            "observed_timestamps": self.observed_timestamps,
+            "total_conversation_length_raw": self.total_conversation_length_raw,
+            "total_dialogue_length_filtered": self.total_dialogue_length_filtered,
+            "future_messages_available": self.future_messages_available,
+            "dataset_version": self.dataset_version,
+        }
+
     def to_dict(self) -> Dict[str, Any]:
-        """Convert to dictionary representation."""
+        """Convert to complete record representation for audit and parquet persistence."""
         return {
             "example_id": self.example_id,
             "conversation_id": self.conversation_id,
@@ -124,8 +162,3 @@ class EventExample:
             "future_messages_available": self.future_messages_available,
             "dataset_version": self.dataset_version,
         }
-
-    def to_feature_dict(self) -> Dict[str, Any]:
-        """Convert exclusively to whitelisted feature fields."""
-        full_d = self.to_dict()
-        return {k: full_d[k] for k in FEATURE_COLUMN_WHITELIST if k in full_d}

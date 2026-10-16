@@ -11,9 +11,14 @@ venv/
 ENV/
 env/
 
-# Datasets and generated event data
+# Datasets, caches, and generated data
+data/
 data/events/
 data/raw/
+data/cleaned/
+data/features/
+data/sequences/
+data/patterns/
 data/processed/
 *.parquet
 *.feather

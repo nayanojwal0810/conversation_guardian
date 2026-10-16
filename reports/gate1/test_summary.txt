@@ -2,40 +2,44 @@
 CONVERSATIONGUARDIAN GATE-1 REGRESSION TEST SUITE EXECUTION SUMMARY
 ======================================================================
 Executed Command: python -m unittest discover -s tests -v
-Total Tests Executed: 12
-Passed: 12
+Total Tests Executed: 14
+Passed: 14
 Failures: 0
 Errors: 0
 Status: PASSED
 ======================================================================
 TEST RESULTS DETAIL:
-test_01_ordering_and_section_header_treatment (test_event_data_pipeline.TestEventDataPipeline.test_01_ordering_and_section_header_treatment)
-Criterion 1: Correct chronological ordering and section header removal. ... ok
-test_02_source_attack_annotation_mapping (test_event_data_pipeline.TestEventDataPipeline.test_02_source_attack_annotation_mapping)
-Criterion 2: Correct mapping of comment-level attack annotation. ... ok
-test_03_attack_occurring_before_observation_checkpoint (test_event_data_pipeline.TestEventDataPipeline.test_03_attack_occurring_before_observation_checkpoint)
-Criterion 3: Attack occurring before observation checkpoint. ... ok
-test_04_attack_occurring_at_first_future_position (test_event_data_pipeline.TestEventDataPipeline.test_04_attack_occurring_at_first_future_position)
-Criterion 4: Attack occurring exactly at the first future position (index = n_obs). ... ok
-test_05_attack_occurring_at_final_position_of_forecast_window (test_event_data_pipeline.TestEventDataPipeline.test_05_attack_occurring_at_final_position_of_forecast_window)
-Criterion 5: Attack occurring at final position of forecast window (index = n_obs + 2). ... ok
-test_06_attack_occurring_outside_forecast_window (test_event_data_pipeline.TestEventDataPipeline.test_06_attack_occurring_outside_forecast_window)
-Criterion 6: Attack occurring outside forecast window (index > n_obs + 2). ... ok
-test_07_no_attack_with_complete_future_window (test_event_data_pipeline.TestEventDataPipeline.test_07_no_attack_with_complete_future_window)
-Criterion 7: No attack with complete future window (L >= n_obs + 3). ... ok
-test_08_no_attack_with_incomplete_future_window (test_event_data_pipeline.TestEventDataPipeline.test_08_no_attack_with_incomplete_future_window)
-Criterion 8: No attack with incomplete future window (n_obs <= L < n_obs + 3). ... ok
-test_09_conversation_shorter_than_observation_checkpoint (test_event_data_pipeline.TestEventDataPipeline.test_09_conversation_shorter_than_observation_checkpoint)
-Criterion 9: Conversation shorter than observation checkpoint (L < n_obs). ... ok
-test_10_no_conversation_or_pair_leakage_across_partitions (test_event_data_pipeline.TestEventDataPipeline.test_10_no_conversation_or_pair_leakage_across_partitions)
-Criterion 10: Partition and pair integrity on the actual corpus. ... ok
-test_11_reproducibility_of_dataset_construction (test_event_data_pipeline.TestEventDataPipeline.test_11_reproducibility_of_dataset_construction)
-Criterion 11: Dataset construction reproducibility and output determinism. ... ok
-test_12_prohibition_of_target_audit_fields_from_feature_whitelist (test_event_data_pipeline.TestEventDataPipeline.test_12_prohibition_of_target_audit_fields_from_feature_whitelist)
-Criterion 12: Strict isolation of ground truth / audit fields from feature whitelist. ... ok
+test_01_attack_at_first_position_of_forecast_window (test_event_data_pipeline.TestEventDataPipeline.test_01_attack_at_first_position_of_forecast_window)
+Criterion 1: Attack occurring exactly at the first future position (index = n_obs). ... ok
+test_02_attack_at_final_position_of_forecast_window (test_event_data_pipeline.TestEventDataPipeline.test_02_attack_at_final_position_of_forecast_window)
+Criterion 2: Attack occurring at final position of forecast window (index = n_obs + 2). ... ok
+test_03_attack_outside_forecast_window (test_event_data_pipeline.TestEventDataPipeline.test_03_attack_outside_forecast_window)
+Criterion 3: Attack occurring outside forecast window (index > n_obs + 2). ... ok
+test_04_attack_in_window_with_premature_termination (test_event_data_pipeline.TestEventDataPipeline.test_04_attack_in_window_with_premature_termination)
+Criterion 4: Attack within forecast window, but dialogue terminates prematurely (positive holds). ... ok
+test_05_no_attack_with_complete_future_window (test_event_data_pipeline.TestEventDataPipeline.test_05_no_attack_with_complete_future_window)
+Criterion 5: No attack with complete future window (L >= n_obs + 3). ... ok
+test_06_no_attack_with_incomplete_future_window_censored (test_event_data_pipeline.TestEventDataPipeline.test_06_no_attack_with_incomplete_future_window_censored)
+Criterion 6: No attack with incomplete future window (n_obs <= L < n_obs + 3). ... ok
+test_07_attack_already_observed_in_prefix (test_event_data_pipeline.TestEventDataPipeline.test_07_attack_already_observed_in_prefix)
+Criterion 7: Attack occurring before observation checkpoint. ... ok
+test_08_feature_dict_exact_allowlist (test_event_data_pipeline.TestEventDataPipeline.test_08_feature_dict_exact_allowlist)
+Criterion 8: Feature dictionary contains only the exact approved model-input fields. ... ok
+test_09_invalid_source_dir_fails_fast (test_event_data_pipeline.TestEventDataPipeline.test_09_invalid_source_dir_fails_fast)
+Criterion 9: Explicitly invalid source directory raises FileNotFoundError without silent fallback. ... ok
+test_10_source_validation_checks (test_event_data_pipeline.TestEventDataPipeline.test_10_source_validation_checks)
+Criterion 10: Source annotation inconsistencies, missing conversation references, and pair flaws fail validation. ... ok
+test_11_corpus_pair_integrity_and_split_preservation (test_event_data_pipeline.TestEventDataPipeline.test_11_corpus_pair_integrity_and_split_preservation)
+Criterion 11: Real corpus verification for pair reciprocity, split preservation, and label opposition. ... ok
+test_12_dataset_construction_determinism (test_event_data_pipeline.TestEventDataPipeline.test_12_dataset_construction_determinism)
+Criterion 12: Dataset construction reproducibility and determinism. ... ok
+test_13_ordering_and_section_header_treatment (test_event_data_pipeline.TestEventDataPipeline.test_13_ordering_and_section_header_treatment)
+Criterion 13: Correct chronological ordering and section header removal. ... ok
+test_14_conversation_shorter_than_observation_checkpoint (test_event_data_pipeline.TestEventDataPipeline.test_14_conversation_shorter_than_observation_checkpoint)
+Criterion 14: Conversation shorter than observation checkpoint (L < n_obs). ... ok
 
 ----------------------------------------------------------------------
-Ran 12 tests in 2.805s
+Ran 14 tests in 3.275s
 
 OK
 

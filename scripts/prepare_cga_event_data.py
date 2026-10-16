@@ -25,7 +25,8 @@ from conversation_guardian.data.schemas import (
     REASON_ATTACK_ALREADY_OBSERVED,
     REASON_CENSORED_INCOMPLETE_WINDOW,
     REASON_INSUFFICIENT_OBSERVED_PREFIX,
-    FEATURE_COLUMN_WHITELIST,
+    MODEL_INPUT_ALLOWLIST,
+    METADATA_COLUMNS,
     FORBIDDEN_AUDIT_COLUMNS,
     ConversationRecord,
     EventExample,
@@ -33,7 +34,6 @@ from conversation_guardian.data.schemas import (
 from conversation_guardian.data.source_loader import (
     load_cga_source_records,
     generate_source_manifest,
-    ensure_corpus_available,
 )
 from conversation_guardian.data.event_builder import (
     filter_and_order_utterances,
@@ -143,7 +143,6 @@ def generate_pair_split_audit(
             pair_key = tuple(sorted([cid, pid]))
             unique_pairs.add(pair_key)
 
-        # In pair-level counting, each mutual pair is checked twice (once per conversation)
         audit_rows.append({
             "split": sp,
             "total_conversations": n_convs,
@@ -167,7 +166,6 @@ def generate_forecast_eligibility_table(
 ) -> pd.DataFrame:
     """Generate forecast_eligibility_by_checkpoint.csv detailing eligibility counts and prevalence."""
     rows = []
-    # Group by (checkpoint_n_obs, split)
     grouped = defaultdict(list)
     for ex in examples:
         grouped[(ex.checkpoint_n_obs, ex.split)].append(ex)
@@ -276,23 +274,30 @@ All records are processed using strict clean-room boundary definitions for fixed
 
 ---
 
-## 5. Feature Whitelist vs. Forbidden Audit Fields
+## 5. Strict Separation: Model Inputs vs. Metadata & Audit Fields
 
-### 5.1 Model Feature Whitelist (`FEATURE_COLUMN_WHITELIST`)
-Strictly allowable as inputs to machine learning models:
-- `example_id`: Unique deterministic example key (`{conversation_id}__obs{n_obs}_h{h}`).
+### 5.1 Model Input Predictor Allowlist (`MODEL_INPUT_ALLOWLIST`)
+Direct predictors that machine learning models are permitted to consume:
+- `observed_prefix_text`: Raw concatenated text of the observed comments ($0 \\dots n_{\\text{observed}} - 1$).
+
+### 5.2 Metadata Columns (`METADATA_COLUMNS`)
+Retained for tracking, partitioning, slicing, and off-line joins, but **never** passed directly into the model:
+- `example_id`: Unique example key (`{conversation_id}__obs{n_obs}_h{h}`).
 - `conversation_id`: Discussion thread identifier.
 - `pair_id`: Partner discussion thread identifier.
 - `split`: Dataset partition (`train`, `val`, `test`).
 - `checkpoint_n_obs`: Observation checkpoint ($1, 3, 5$).
 - `horizon_h`: Forecasting horizon ($3$).
 - `observed_prefix_length`: Number of observed utterances ($n_{\\text{observed}}$).
-- `observed_prefix_text`: Concatenated text of observed comments ($0 \\dots n_{\\text{observed}} - 1$).
-- `observed_utterance_ids`: List of IDs for the observed comments.
-- `observed_speakers`: List of speakers for the observed comments.
-- `observed_timestamps`: Timestamps for the observed comments.
+- `observed_utterance_ids`: List of IDs for observed comments.
+- `observed_speakers`: Raw speaker identities (excluded to prevent user-specific bias).
+- `observed_timestamps`: Raw timestamp values.
+- `total_conversation_length_raw`: Raw utterance count including headers.
+- `total_dialogue_length_filtered`: Filtered utterance count ($L$).
+- `future_messages_available`: Number of remaining future messages.
+- `dataset_version`: Dataset build version string.
 
-### 5.2 Forbidden Audit Fields (`FORBIDDEN_AUDIT_COLUMNS`)
+### 5.3 Forbidden Audit Fields (`FORBIDDEN_AUDIT_COLUMNS`)
 Strictly prohibited from feature matrices and model inputs:
 - `target_label`: Ground truth binary label ($1$ or $0$).
 - `eligibility_status`: Eligibility flag (`ELIGIBLE`, `EXCLUDED`).
@@ -300,9 +305,6 @@ Strictly prohibited from feature matrices and model inputs:
 - `has_attack_in_conversation`: Conversation-level overall attack label.
 - `first_attack_pos`: Zero-based index of the first annotated attack.
 - `first_attack_utterance_id`: Revision ID of the first attack utterance.
-- `total_conversation_length_raw`: Raw utterance count including headers.
-- `total_dialogue_length_filtered`: Filtered utterance count ($L$).
-- `future_messages_available`: Number of remaining future messages.
 - `censoring_reason`: Detailed censoring annotation.
 """
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -321,7 +323,7 @@ This document specifies the exact boundary evaluation behavior across all eight 
 ## Boundary Decision Matrix
 
 | Scenario # | Filtered Dialogue Length ($L$) | Attack Position ($p_{\\text{att}}$) | Checkpoint ($n_{\\text{obs}}$) | Window Range | Eligibility Status | Reason Code | Target Label | Rule Rationale |
-|:---:|:---:|:---:|:---:|:---:|:---:|:---|:---:|:---|
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---|:---:|:---|
 | **Case 1** | $6$ | None | $3$ | $[3, 4, 5]$ | `ELIGIBLE` | `NEGATIVE_EVENT` | `0` | All 3 future messages observed, 0 attacks. |
 | **Case 2** | $5$ | None | $3$ | $[3, 4, 5]$ | `EXCLUDED` | `CENSORED_INCOMPLETE_WINDOW` | `None` | Only 2 future messages observed ($L=5 < 6$); peaceful termination is censored. |
 | **Case 3** | $4$ | None | $5$ | $[5, 6, 7]$ | `EXCLUDED` | `INSUFFICIENT_OBSERVED_PREFIX` | `None` | Thread length ($4$) is shorter than the observation checkpoint ($5$). |
@@ -403,8 +405,8 @@ This document specifies the exact boundary evaluation behavior across all eight 
         f.write(content.strip() + "\n")
 
 
-def generate_test_summary(output_path: Path) -> None:
-    """Run unittest suite programmatically and write reports/gate1/test_summary.txt."""
+def generate_test_summary(output_path: Path) -> bool:
+    """Run unittest suite programmatically and write reports/gate1/test_summary.txt. Return True if passed."""
     import unittest
     import io
 
@@ -415,6 +417,7 @@ def generate_test_summary(output_path: Path) -> None:
     runner = unittest.TextTestRunner(stream=stream, verbosity=2)
     result = runner.run(suite)
 
+    status_str = "PASSED" if result.wasSuccessful() else "FAILED"
     output_lines = [
         "======================================================================",
         "CONVERSATIONGUARDIAN GATE-1 REGRESSION TEST SUITE EXECUTION SUMMARY",
@@ -424,7 +427,7 @@ def generate_test_summary(output_path: Path) -> None:
         f"Passed: {result.testsRun - len(result.failures) - len(result.errors)}",
         f"Failures: {len(result.failures)}",
         f"Errors: {len(result.errors)}",
-        f"Status: {'PASSED' if result.wasSuccessful() else 'FAILED'}",
+        f"Status: {status_str}",
         "======================================================================",
         "TEST RESULTS DETAIL:",
         stream.getvalue(),
@@ -434,6 +437,8 @@ def generate_test_summary(output_path: Path) -> None:
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with open(output_path, "w", encoding="utf-8") as f:
         f.write("\n".join(output_lines) + "\n")
+
+    return result.wasSuccessful()
 
 
 def main():
@@ -484,19 +489,19 @@ def main():
     print("CONVERSATIONGUARDIAN — GATE 1: FRESH DATA PIPELINE BUILDER")
     print("=" * 70)
 
-    # 1. Source manifest
-    print("\n[Step 1/6] Generating source manifest and computing checksums...")
+    # 1. Source manifest (portable provenance)
+    print("\n[Step 1/6] Generating portable source manifest and computing checksums...")
     manifest = generate_source_manifest(args.source_dir)
     manifest_path = reports_dir / "source_manifest.json"
     manifest_path.parent.mkdir(parents=True, exist_ok=True)
     with open(manifest_path, "w", encoding="utf-8") as f:
         json.dump(manifest, f, indent=2)
-    print(f"  -> Saved source manifest to {manifest_path}")
+    print(f"  -> Saved portable source manifest to {manifest_path}")
 
-    # 2. Load raw source records
-    print("\n[Step 2/6] Loading official ConvoKit corpus records...")
+    # 2. Load raw source records with fail-fast validation
+    print("\n[Step 2/6] Loading official ConvoKit corpus records with structural validation...")
     convs = load_cga_source_records(args.source_dir)
-    print(f"  -> Successfully loaded {len(convs)} conversations from source.")
+    print(f"  -> Successfully loaded and verified {len(convs)} conversations from source.")
 
     # 3. Source summaries and audits
     print("\n[Step 3/6] Generating dataset summary and pair-split audit tables...")
@@ -546,8 +551,12 @@ def main():
     # 6. Run regression tests and emit test summary
     print("\n[Step 6/6] Executing unit test suite and generating test summary...")
     test_summary_path = reports_dir / "test_summary.txt"
-    generate_test_summary(test_summary_path)
+    tests_passed = generate_test_summary(test_summary_path)
     print(f"  -> Saved test summary to {test_summary_path}")
+
+    if not tests_passed:
+        print("\n[ERROR] Regression test suite FAILED. Aborting pipeline with exit code 1.")
+        sys.exit(1)
 
     print("\n" + "=" * 70)
     print("GATE 1 DATA PIPELINE EXECUTION COMPLETED SUCCESSFULLY!")

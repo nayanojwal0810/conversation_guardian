@@ -7,7 +7,7 @@ This document specifies the exact boundary evaluation behavior across all eight 
 ## Boundary Decision Matrix
 
 | Scenario # | Filtered Dialogue Length ($L$) | Attack Position ($p_{\text{att}}$) | Checkpoint ($n_{\text{obs}}$) | Window Range | Eligibility Status | Reason Code | Target Label | Rule Rationale |
-|:---:|:---:|:---:|:---:|:---:|:---:|:---|:---:|:---|
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---|:---:|:---|
 | **Case 1** | $6$ | None | $3$ | $[3, 4, 5]$ | `ELIGIBLE` | `NEGATIVE_EVENT` | `0` | All 3 future messages observed, 0 attacks. |
 | **Case 2** | $5$ | None | $3$ | $[3, 4, 5]$ | `EXCLUDED` | `CENSORED_INCOMPLETE_WINDOW` | `None` | Only 2 future messages observed ($L=5 < 6$); peaceful termination is censored. |
 | **Case 3** | $4$ | None | $5$ | $[5, 6, 7]$ | `EXCLUDED` | `INSUFFICIENT_OBSERVED_PREFIX` | `None` | Thread length ($4$) is shorter than the observation checkpoint ($5$). |

@@ -2,12 +2,13 @@
   "dataset_name": "conversations-gone-awry-corpus",
   "dataset_source": "Cornell ConvoKit (Zhang et al. ACL 2018)",
   "acquisition_method": "convokit.download('conversations-gone-awry-corpus')",
-  "corpus_directory": "C:\\Users\\nayan\\.convokit\\saved-corpora\\conversations-gone-awry-corpus",
+  "canonical_relative_path": ".convokit/saved-corpora/conversations-gone-awry-corpus",
   "environment": {
-    "python_version": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]",
+    "python_version": "3.13.3",
     "convokit_version": "4.1.2",
     "pandas_version": "3.0.3",
-    "pyarrow_version": "24.0.0"
+    "pyarrow_version": "24.0.0",
+    "numpy_version": "2.4.6"
   },
   "files": {
     "conversations.json": {

@@ -61,23 +61,30 @@ All records are processed using strict clean-room boundary definitions for fixed
 
 ---
 
-## 5. Feature Whitelist vs. Forbidden Audit Fields
+## 5. Strict Separation: Model Inputs vs. Metadata & Audit Fields
 
-### 5.1 Model Feature Whitelist (`FEATURE_COLUMN_WHITELIST`)
-Strictly allowable as inputs to machine learning models:
-- `example_id`: Unique deterministic example key (`{conversation_id}__obs{n_obs}_h{h}`).
+### 5.1 Model Input Predictor Allowlist (`MODEL_INPUT_ALLOWLIST`)
+Direct predictors that machine learning models are permitted to consume:
+- `observed_prefix_text`: Raw concatenated text of the observed comments ($0 \dots n_{\text{observed}} - 1$).
+
+### 5.2 Metadata Columns (`METADATA_COLUMNS`)
+Retained for tracking, partitioning, slicing, and off-line joins, but **never** passed directly into the model:
+- `example_id`: Unique example key (`{conversation_id}__obs{n_obs}_h{h}`).
 - `conversation_id`: Discussion thread identifier.
 - `pair_id`: Partner discussion thread identifier.
 - `split`: Dataset partition (`train`, `val`, `test`).
 - `checkpoint_n_obs`: Observation checkpoint ($1, 3, 5$).
 - `horizon_h`: Forecasting horizon ($3$).
 - `observed_prefix_length`: Number of observed utterances ($n_{\text{observed}}$).
-- `observed_prefix_text`: Concatenated text of observed comments ($0 \dots n_{\text{observed}} - 1$).
-- `observed_utterance_ids`: List of IDs for the observed comments.
-- `observed_speakers`: List of speakers for the observed comments.
-- `observed_timestamps`: Timestamps for the observed comments.
+- `observed_utterance_ids`: List of IDs for observed comments.
+- `observed_speakers`: Raw speaker identities (excluded to prevent user-specific bias).
+- `observed_timestamps`: Raw timestamp values.
+- `total_conversation_length_raw`: Raw utterance count including headers.
+- `total_dialogue_length_filtered`: Filtered utterance count ($L$).
+- `future_messages_available`: Number of remaining future messages.
+- `dataset_version`: Dataset build version string.
 
-### 5.2 Forbidden Audit Fields (`FORBIDDEN_AUDIT_COLUMNS`)
+### 5.3 Forbidden Audit Fields (`FORBIDDEN_AUDIT_COLUMNS`)
 Strictly prohibited from feature matrices and model inputs:
 - `target_label`: Ground truth binary label ($1$ or $0$).
 - `eligibility_status`: Eligibility flag (`ELIGIBLE`, `EXCLUDED`).
@@ -85,7 +92,4 @@ Strictly prohibited from feature matrices and model inputs:
 - `has_attack_in_conversation`: Conversation-level overall attack label.
 - `first_attack_pos`: Zero-based index of the first annotated attack.
 - `first_attack_utterance_id`: Revision ID of the first attack utterance.
-- `total_conversation_length_raw`: Raw utterance count including headers.
-- `total_dialogue_length_filtered`: Filtered utterance count ($L$).
-- `future_messages_available`: Number of remaining future messages.
 - `censoring_reason`: Detailed censoring annotation.
