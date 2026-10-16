@@ -507,3 +507,43 @@ class ConversationGuardianRepository:
             return list(self.moderator_reviews.aggregate(pipeline))
         except PyMongoError as exc:
             raise RepositoryError(f"Error aggregating reviews by status: {str(exc)}") from exc
+
+    def get_overview_metrics(self) -> Dict[str, int]:
+        """
+        Retrieve high-level summary KPIs for the moderator dashboard.
+        """
+        try:
+            total_convs = self.conversations.count_documents({})
+            total_asmts = self.risk_assessments.count_documents({})
+            total_alerts = self.risk_assessments.count_documents({"alert": True})
+            active_reviews = self.moderator_reviews.count_documents(
+                {"review_status": {"$in": [ReviewStatus.PENDING.value, ReviewStatus.IN_REVIEW.value]}}
+            )
+            return {
+                "total_conversations": total_convs,
+                "total_assessments": total_asmts,
+                "total_alerts": total_alerts,
+                "active_reviews": active_reviews,
+            }
+        except PyMongoError as exc:
+            raise RepositoryError(f"Error computing overview metrics: {str(exc)}") from exc
+
+    def list_recent_conversations(self, limit: int = 50) -> List[Dict[str, Any]]:
+        """
+        Retrieve recently updated conversations for dashboard search and selection.
+        """
+        try:
+            cursor = self.conversations.find({}, {"_id": 0}).sort("updated_at", -1).limit(limit)
+            return list(cursor)
+        except PyMongoError as exc:
+            raise RepositoryError(f"Error listing recent conversations: {str(exc)}") from exc
+
+    def list_recent_assessments(self, limit: int = 50) -> List[Dict[str, Any]]:
+        """
+        Retrieve recently created assessments for dashboard review selection.
+        """
+        try:
+            cursor = self.risk_assessments.find({}, {"_id": 0}).sort("created_at", -1).limit(limit)
+            return list(cursor)
+        except PyMongoError as exc:
+            raise RepositoryError(f"Error listing recent assessments: {str(exc)}") from exc

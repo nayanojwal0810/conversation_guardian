@@ -312,4 +312,87 @@ python -m pytest tests/ -v
 Observed test execution:
 - **Unit Tests:** 10 passed (covering connection failure handling, field/enum validation, conversation CRUD, assessment ordering, unique constraints, review workflows, append-only event integrity, query filters, aggregations, and workflow integration).
 - **Integration Tests:** 4 passed against container `conversation_guardian_mongodb` (MongoDB 7.0.45, verifying live server-side `$jsonSchema` validation rejections, unique index duplicate key errors, `IXSCAN` query plan execution, and end-to-end predictor-to-storage workflows).
-- **Total Test Suite:** 58 passed, 0 skipped, 0 failed across all model, pipeline, and storage suites (completed in ~31s).
+- **Dashboard Unit Tests:** 4 passed (verifying overview metric aggregations, empty and populated states, recent listings, and UI status badge formatting).
+- **Total Test Suite:** 62 passed, 0 skipped, 0 failed across all model, pipeline, storage, and dashboard suites.
+
+---
+
+## 10. Streamlit Moderator Dashboard (`app.py`)
+
+ConversationGuardian includes a professional, minimal moderation dashboard designed for content review teams and operational monitoring.
+
+### Visual Architecture & Principles
+- **Minimalist Industrial Palette:** Dark navy (`#0f172a`), crisp white surfaces, subtle slate borders (`#e2e8f0`), restrained teal primary accents (`#0f766e`), amber warnings, and red alerts.
+- **Zero Clutter:** High-signal density without decorative widgets or unformatted raw data dumps.
+- **Calibrated Transparency:** Explicit notices distinguishing raw model risk scores from calibrated probabilities.
+
+### End-to-End System Architecture
+
+```mermaid
+flowchart TD
+    subgraph Offline_ML ["Offline Machine Learning Pipeline"]
+        CGA["CGA-WIKI Source Corpus"] --> DataPipe["scripts/prepare_cga_event_data.py"]
+        DataPipe --> Events["Eligible Prefix Events (n=1, 3, 5; H=3)"]
+        Events --> Train["scripts/run_sequence_benchmark.py"]
+        Train --> Bundles["Model Bundles (models/bundles/)<br/>• n=1: Hybrid_LogReg (tau=0.15)<br/>• n=3: Hybrid_LogReg (tau=0.27)<br/>• n=5: AggregateState_LogReg (tau=0.42)"]
+    end
+
+    subgraph Service_Layer ["Service & Storage Layer"]
+        Bundles --> Predictor["ConversationGuardianPredictor"]
+        Predictor --> Workflow["StorageWorkflowService"]
+        Workflow --> Repo["ConversationGuardianRepository"]
+        Repo <--> Mongo[("MongoDB 7.0 Container<br/>:27018 / conversation_guardian<br/>• conversations<br/>• risk_assessments<br/>• review_events<br/>• moderator_reviews")]
+    end
+
+    subgraph UI_Layer ["Moderator UI (app.py)"]
+        Workflow <--> Streamlit["Streamlit Moderator Dashboard<br/>(python -m streamlit run app.py)"]
+        Streamlit --> Overview["1. System Overview & KPIs"]
+        Streamlit --> Assess["2. Assess Dialogue (n in 1, 3, 5)"]
+        Streamlit --> History["3. Chronological Assessment History"]
+        Streamlit --> Review["4. Moderator Review & Audit Trail"]
+        Streamlit --> Analytics["5. Database Analytics & Triage"]
+    end
+```
+
+### Launching the Dashboard
+
+1. **Ensure the MongoDB Docker container is running:**
+   ```bash
+   docker compose up -d
+   ```
+2. **Launch the dashboard application:**
+   ```bash
+   python -m streamlit run app.py
+   ```
+3. Open your browser to `http://localhost:8501`.
+
+### Core Views & Workflows
+
+1. **System Overview (`Overview`):**
+   - Displays real-time database connection status badge (`mongodb://127.0.0.1:27018`).
+   - Four core operational KPIs: Total Conversations, Risk Assessments, Active Reviews, Derailment Alerts.
+   - Two compact charts: Total Alerts by Observation Checkpoint and Moderator Reviews by Current Status.
+2. **Assess Conversation (`Assess Conversation`):**
+   - Interactive submission form for conversation prefixes at checkpoints $n \in \{1, 3, 5\}$ for horizon $H = 3$.
+   - Quick-fill presets (`Escalating Dialogue` and `Constructive Dialogue`).
+   - Executes inference using the validation-selected model bundle and persists the assessment to MongoDB.
+   - Renders alert banners (Red ⚠️ ALERT / Teal ✓ NOMINAL), model metrics, and turn-by-turn conversational tone signals table.
+   - Direct button handoff to create or update a review in the moderator panel.
+3. **Assessment History (`Assessment History`):**
+   - Search by Conversation ID or select from recent monitored threads.
+   - View conversation metadata (Overall review status, source, total evaluations).
+   - Chronological table of all risk evaluations, expandable observed messages, and heuristic signals.
+4. **Moderator Review & Decision Audit (`Moderator Review`):**
+   - Queue of recent assessments with alert status indicators.
+   - Full assessment context (checkpoint, model family, risk score vs. threshold, observed messages).
+   - Form to submit moderation decisions (`DISMISS`, `ESCALATE`, `WARN_USER`, `DELETE_MESSAGE`, `LOCK_THREAD`, etc.) and transitions (`PENDING`, `IN_REVIEW`, `RESOLVED`, `DISMISSED`).
+   - Immutable, append-only chronological audit log of all historical review actions with actor stamps, previous/new states, and moderator notes.
+5. **Database Analytics (`Analytics`):**
+   - Checkpoint alert breakdown table and bar chart.
+   - Review workflow distribution table and donut chart.
+
+### Operational Constraints & Limitations
+
+- **Uncalibrated Model Risk Scores:** Raw scores produced by the classifiers reflect logistic decision boundary distances and are thresholded at validation-frozen optimal values ($\tau$). They are not calibrated probabilities.
+- **Single-Tenant / Local Review:** The dashboard is structured for local moderator review or internal VPN deployment. For production multi-tenant environments, reverse proxy authentication (e.g., OAuth2-proxy / SSO) must front the Streamlit service.
+- **Audit Immutability:** The `review_events` collection is append-only by system policy. Moderator actions record new events rather than overwriting previous entries.
