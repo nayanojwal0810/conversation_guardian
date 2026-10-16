@@ -2,7 +2,7 @@
 Integration tests for ConversationGuardian against a live MongoDB instance.
 
 These tests connect to the real MongoDB database configured via MONGODB_URI
-(default: mongodb://127.0.0.1:27017).
+(default: mongodb://127.0.0.1:27018).
 
 If MongoDB is not reachable, tests are gracefully skipped with a clear,
 actionable message instructing the developer to start MongoDB via Docker Compose.

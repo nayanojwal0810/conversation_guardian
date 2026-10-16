@@ -64,8 +64,8 @@ def run_demo():
         print(f"\n[ERROR] Could not connect to live MongoDB instance:\n  {str(exc)}")
         print("\nTroubleshooting:")
         print("  1. Verify Docker is running and execute: 'docker compose up -d'")
-        print("  2. Verify port 27017 is bound on localhost (127.0.0.1:27017)")
-        print("  3. Check connection string environment variable: MONGODB_URI")
+        print("  2. Verify published port (default: 127.0.0.1:27018) is bound on localhost")
+        print("  3. Check connection string environment variable: MONGODB_URI (or MONGODB_HOST_PORT)")
         sys.exit(1)
 
     print("\n[Step 2/8] Setting up collection schemas, $jsonSchema validators, and indexes...")

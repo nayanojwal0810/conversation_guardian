@@ -7,6 +7,7 @@ and end-to-end prediction workflow coordination.
 
 from conversation_guardian.storage.connection import (
     DatabaseConnectionError,
+    get_mongodb_port,
     get_mongodb_uri,
     get_database_name,
     create_mongo_client,
@@ -33,6 +34,7 @@ from conversation_guardian.storage.workflow import StorageWorkflowService
 
 __all__ = [
     "DatabaseConnectionError",
+    "get_mongodb_port",
     "get_mongodb_uri",
     "get_database_name",
     "create_mongo_client",

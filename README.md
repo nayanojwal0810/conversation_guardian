@@ -210,14 +210,21 @@ Moderation platforms operate in an adversarial and regulatory environment where 
 
 ### Configuration & Docker Compose Setup
 
+#### Prerequisites
+- **Docker & Docker Compose**: Docker 20.10+ and Docker Compose v2+ (e.g., Docker Desktop on Windows with WSL2 backend). Ensure Docker Desktop is launched and running.
+- **Python Driver**: `pymongo>=4.0.0` (pinned to `4.17.0` in `requirements.txt`).
+
+#### Configuration Variables
+
 Configuration is resolved via standard environment variables:
 
 | Variable | Default Value | Description |
 |---|---|---|
-| `MONGODB_URI` | `mongodb://127.0.0.1:27017` | MongoDB connection URI (must not expose credentials in Git). |
+| `MONGODB_HOST_PORT` | `27018` | Published host port for Docker Compose (configured to `27018` to avoid collision with standard host-level `27017` MongoDB services). |
+| `MONGODB_URI` | `mongodb://127.0.0.1:27018` | MongoDB connection URI. Defaults to `mongodb://127.0.0.1:{MONGODB_HOST_PORT}` if unset. (Never commit actual credentials to Git). |
 | `MONGODB_DATABASE` | `conversation_guardian` | Target MongoDB database name. |
 
-A template is provided in `.env.example`.
+A safe template is provided in [`.env.example`](file:///D:/DS%20Projects/ConversationGuardian_Gate1/.env.example).
 
 #### Running MongoDB Locally via Docker Compose
 
@@ -225,7 +232,7 @@ A template is provided in `.env.example`.
 # 1. Start MongoDB in detached mode
 docker compose up -d
 
-# 2. Check container health status
+# 2. Check container health status (verifies mongo:7.0 is healthy and mapped to 127.0.0.1:27018)
 docker compose ps
 
 # 3. View service logs
@@ -235,7 +242,18 @@ docker compose logs -f mongodb
 docker compose down
 ```
 
-The `docker-compose.yml` binds strictly to `127.0.0.1:27017` to prevent accidental public network exposure and utilizes a named persistent volume (`mongodb_data`).
+The [`docker-compose.yml`](file:///D:/DS%20Projects/ConversationGuardian_Gate1/docker-compose.yml) binds strictly to `127.0.0.1:${MONGODB_HOST_PORT:-27018}:27017` to prevent accidental public network exposure and utilizes a named persistent volume (`conversation_guardian_mongodb_data`).
+
+#### Troubleshooting Port Conflicts Without Stopping Unrelated Services
+
+If port 27017 or 27018 is already bound by a pre-existing host service (e.g., a local Windows MongoDB service or another container):
+1. **Identify the listener:**
+   - PowerShell: `Get-NetTCPConnection -LocalPort 27017 -ErrorAction SilentlyContinue | Format-Table`
+   - Command Prompt: `netstat -ano | findstr :27017`
+2. **Do NOT kill or terminate unrelated host services.** Instead, simply configure an alternative free host port for this project:
+   - In `.env` (or shell): set `MONGODB_HOST_PORT=27019`
+   - Re-run `docker compose up -d`
+   - Python code and scripts automatically derive `mongodb://127.0.0.1:27019` without any manual code changes.
 
 ### Running the Demonstration Script
 
@@ -246,7 +264,7 @@ python scripts/demo_mongodb_workflow.py
 ```
 
 The script executes 8 automated workflow steps:
-1. Connects to MongoDB with connection ping verification.
+1. Connects to MongoDB (`mongodb://127.0.0.1:27018`) with connection ping verification.
 2. Applies collection `$jsonSchema` validators and creates indexes.
 3. Initializes the deployable predictor and storage workflow service.
 4. Creates or retrieves a demonstration conversation record.
@@ -284,7 +302,7 @@ The storage test suite is divided into isolated unit tests and live integration 
 # Run isolated unit tests (using mongomock test double)
 python -m pytest tests/test_storage_unit.py -v
 
-# Run live MongoDB integration tests (executes against live instance if running, otherwise skips gracefully)
+# Run live MongoDB integration tests against the Docker container
 python -m pytest tests/test_storage_integration.py -v
 
 # Run entire repository test suite
@@ -293,5 +311,5 @@ python -m pytest tests/ -v
 
 Observed test execution:
 - **Unit Tests:** 10 passed (covering connection failure handling, field/enum validation, conversation CRUD, assessment ordering, unique constraints, review workflows, append-only event integrity, query filters, aggregations, and workflow integration).
-- **Integration Tests:** 4 skipped when no live MongoDB service is reachable (or 4 passed against a live container).
-- **Total Test Suite:** 54 passed, 4 skipped across all model, pipeline, and storage suites.
+- **Integration Tests:** 4 passed against container `conversation_guardian_mongodb` (MongoDB 7.0.45, verifying live server-side `$jsonSchema` validation rejections, unique index duplicate key errors, `IXSCAN` query plan execution, and end-to-end predictor-to-storage workflows).
+- **Total Test Suite:** 58 passed, 0 skipped, 0 failed across all model, pipeline, and storage suites (completed in ~31s).

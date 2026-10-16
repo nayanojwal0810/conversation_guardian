@@ -4,8 +4,8 @@ services:
     container_name: conversation_guardian_mongodb
     restart: unless-stopped
     ports:
-      # Bind strictly to localhost (127.0.0.1) rather than exposing publicly (0.0.0.0)
-      - "127.0.0.1:27017:27017"
+      # Bind strictly to localhost (127.0.0.1) using configurable host port (default: 27018 to avoid 27017 conflicts)
+      - "127.0.0.1:${MONGODB_HOST_PORT:-27018}:27017"
     environment:
       - MONGO_INITDB_DATABASE=conversation_guardian
     volumes:

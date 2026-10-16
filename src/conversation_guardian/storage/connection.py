@@ -12,7 +12,9 @@ from pymongo.database import Database
 from pymongo.errors import ConnectionFailure, ServerSelectionTimeoutError, PyMongoError
 
 
-DEFAULT_MONGODB_URI = "mongodb://127.0.0.1:27017"
+DEFAULT_MONGODB_HOST = "127.0.0.1"
+DEFAULT_MONGODB_PORT = 27018
+DEFAULT_MONGODB_URI = f"mongodb://{DEFAULT_MONGODB_HOST}:{DEFAULT_MONGODB_PORT}"
 DEFAULT_DATABASE_NAME = "conversation_guardian"
 DEFAULT_TIMEOUT_MS = 3000
 
@@ -22,9 +24,28 @@ class DatabaseConnectionError(RuntimeError):
     pass
 
 
+def get_mongodb_port() -> int:
+    """Resolve published MongoDB host port from environment or default to 27018."""
+    port_str = os.getenv("MONGODB_HOST_PORT", str(DEFAULT_MONGODB_PORT)).strip()
+    try:
+        return int(port_str)
+    except ValueError:
+        return DEFAULT_MONGODB_PORT
+
+
 def get_mongodb_uri() -> str:
-    """Resolve MongoDB connection string from environment or use default."""
-    return os.getenv("MONGODB_URI", DEFAULT_MONGODB_URI).strip() or DEFAULT_MONGODB_URI
+    """
+    Resolve MongoDB connection string.
+    
+    Precedence:
+    1. MONGODB_URI environment variable if set and non-empty.
+    2. Default constructed URI using MONGODB_HOST_PORT (defaults to 27018).
+    """
+    explicit_uri = os.getenv("MONGODB_URI", "").strip()
+    if explicit_uri:
+        return explicit_uri
+    port = get_mongodb_port()
+    return f"mongodb://{DEFAULT_MONGODB_HOST}:{port}"
 
 
 def get_database_name() -> str:
