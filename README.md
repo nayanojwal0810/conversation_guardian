@@ -33,6 +33,7 @@ The objective of Gate 1 is to define and validate an online conversational event
   - `pandas==3.0.3`
   - `numpy==2.4.6`
   - `pyarrow==24.0.0`
+  - `scikit-learn==1.9.0`
 
 ### Setup Instructions
 
@@ -103,19 +104,27 @@ All 12+ critical boundary conditions and integrity checks are covered.
 ## 6. Project Artifacts & Commit Policy
 
 ### Tracked in Git
-- `src/conversation_guardian/`: Core data structures, source loader, and event builder.
+- `src/conversation_guardian/`: Core data structures, source loader, event builder, and ML baseline routines.
 - `scripts/prepare_cga_event_data.py`: Deterministic CLI dataset builder.
-- `tests/test_event_data_pipeline.py`: Unit and regression test suite.
-- `reports/gate1/`: Audit artifacts and data dictionary:
-  - `source_manifest.json`: Portable source provenance, package versions, and SHA-256 file checksums.
-  - `data_dictionary.md`: Schema, indexing rules, and feature vs. audit boundary definitions.
-  - `dataset_summary.csv`: Conversation counts, lengths, and split breakdown.
-  - `pair_split_audit.csv`: Pair reciprocity and partition containment verification.
-  - `forecast_eligibility_by_checkpoint.csv`: Counts of eligible positives, negatives, and exclusions.
-  - `target_boundary_examples.md`: Synthetic boundary walkthroughs.
-  - `test_summary.txt`: Automated test execution log.
+- `scripts/run_baseline_benchmark.py`: Word+Char TF-IDF Logistic Regression & Prior baseline benchmark CLI.
+- `tests/`: Comprehensive unit and regression test suites.
+- `reports/gate1/`: Audit artifacts and data dictionary.
+- `reports/benchmarks/`: Benchmark evaluation metrics and test prediction records.
 
 ### Intentionally Not Committed (`.gitignore`)
 - `data/` and `data/events/*.parquet`: Generated event dataset files are kept out of Git.
+- `models/`: Trained model binaries (`*.joblib`, `*.pt`, `*.bin`).
 - Raw corpus caches and virtual environments (`.venv/`, `__pycache__/`).
 - Model checkpoints and credentials.
+
+---
+
+## 7. Running the Machine Learning Benchmark
+
+Train and evaluate the checkpoint-specific word-and-character TF-IDF Logistic Regression baseline against the empirical prior baseline:
+
+```bash
+python scripts/run_baseline_benchmark.py
+```
+
+This fits models strictly on eligible training examples, selects optimal F1 classification thresholds on validation predictions, freezes the thresholds, and reports final test metrics (AP, ROC-AUC, Precision, Recall, F1, Accuracy, Brier score, Confusion matrix).

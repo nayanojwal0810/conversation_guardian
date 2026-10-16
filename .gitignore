@@ -30,6 +30,8 @@ models/
 *.bin
 *.safetensors
 *.onnx
+*.joblib
+*.pkl
 
 # Environment variables & secrets
 .env
