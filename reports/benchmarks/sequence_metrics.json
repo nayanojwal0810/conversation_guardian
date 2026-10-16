@@ -1,0 +1,1010 @@
+[
+  {
+    "model_name": "MajorityBaseline",
+    "split": "val",
+    "checkpoint_n_obs": 1,
+    "horizon_h": 3,
+    "sample_count": 790,
+    "positive_count": 56,
+    "negative_count": 734,
+    "prevalence": 0.0709,
+    "decision_threshold": 0.5,
+    "AP": 0.0709,
+    "ROC_AUC": 0.5,
+    "Accuracy": 0.9291,
+    "Precision": 0.0,
+    "Recall": 0.0,
+    "F1": 0.0,
+    "Brier_Score": 0.0709,
+    "Confusion_Matrix": [
+      [
+        734,
+        0
+      ],
+      [
+        56,
+        0
+      ]
+    ]
+  },
+  {
+    "model_name": "PriorBaseline",
+    "split": "val",
+    "checkpoint_n_obs": 1,
+    "horizon_h": 3,
+    "sample_count": 790,
+    "positive_count": 56,
+    "negative_count": 734,
+    "prevalence": 0.0709,
+    "decision_threshold": 0.08,
+    "AP": 0.0709,
+    "ROC_AUC": 0.5,
+    "Accuracy": 0.0709,
+    "Precision": 0.0709,
+    "Recall": 1.0,
+    "F1": 0.1324,
+    "Brier_Score": 0.0661,
+    "Confusion_Matrix": [
+      [
+        0,
+        734
+      ],
+      [
+        0,
+        56
+      ]
+    ]
+  },
+  {
+    "model_name": "TFIDF_TextBaseline",
+    "split": "val",
+    "checkpoint_n_obs": 1,
+    "horizon_h": 3,
+    "sample_count": 790,
+    "positive_count": 56,
+    "negative_count": 734,
+    "prevalence": 0.0709,
+    "decision_threshold": 0.2,
+    "AP": 0.3386,
+    "ROC_AUC": 0.8005,
+    "Accuracy": 0.9253,
+    "Precision": 0.4681,
+    "Recall": 0.3929,
+    "F1": 0.4272,
+    "Brier_Score": 0.0567,
+    "Confusion_Matrix": [
+      [
+        709,
+        25
+      ],
+      [
+        34,
+        22
+      ]
+    ]
+  },
+  {
+    "model_name": "AggregateState_LogReg",
+    "split": "val",
+    "checkpoint_n_obs": 1,
+    "horizon_h": 3,
+    "sample_count": 790,
+    "positive_count": 56,
+    "negative_count": 734,
+    "prevalence": 0.0709,
+    "decision_threshold": 0.21,
+    "AP": 0.2557,
+    "ROC_AUC": 0.7242,
+    "Accuracy": 0.9127,
+    "Precision": 0.3673,
+    "Recall": 0.3214,
+    "F1": 0.3429,
+    "Brier_Score": 0.0613,
+    "Confusion_Matrix": [
+      [
+        703,
+        31
+      ],
+      [
+        38,
+        18
+      ]
+    ]
+  },
+  {
+    "model_name": "OrderedState_LogReg",
+    "split": "val",
+    "checkpoint_n_obs": 1,
+    "horizon_h": 3,
+    "sample_count": 790,
+    "positive_count": 56,
+    "negative_count": 734,
+    "prevalence": 0.0709,
+    "decision_threshold": 0.21,
+    "AP": 0.2557,
+    "ROC_AUC": 0.7243,
+    "Accuracy": 0.9127,
+    "Precision": 0.3673,
+    "Recall": 0.3214,
+    "F1": 0.3429,
+    "Brier_Score": 0.0613,
+    "Confusion_Matrix": [
+      [
+        703,
+        31
+      ],
+      [
+        38,
+        18
+      ]
+    ]
+  },
+  {
+    "model_name": "Hybrid_LogReg",
+    "split": "val",
+    "checkpoint_n_obs": 1,
+    "horizon_h": 3,
+    "sample_count": 790,
+    "positive_count": 56,
+    "negative_count": 734,
+    "prevalence": 0.0709,
+    "decision_threshold": 0.15,
+    "AP": 0.3409,
+    "ROC_AUC": 0.8081,
+    "Accuracy": 0.8975,
+    "Precision": 0.3596,
+    "Recall": 0.5714,
+    "F1": 0.4414,
+    "Brier_Score": 0.0555,
+    "Confusion_Matrix": [
+      [
+        677,
+        57
+      ],
+      [
+        24,
+        32
+      ]
+    ]
+  },
+  {
+    "model_name": "MajorityBaseline",
+    "split": "test",
+    "checkpoint_n_obs": 1,
+    "horizon_h": 3,
+    "sample_count": 779,
+    "positive_count": 75,
+    "negative_count": 704,
+    "prevalence": 0.0963,
+    "decision_threshold": 0.5,
+    "AP": 0.0963,
+    "ROC_AUC": 0.5,
+    "Accuracy": 0.9037,
+    "Precision": 0.0,
+    "Recall": 0.0,
+    "F1": 0.0,
+    "Brier_Score": 0.0963,
+    "Confusion_Matrix": [
+      [
+        704,
+        0
+      ],
+      [
+        75,
+        0
+      ]
+    ]
+  },
+  {
+    "model_name": "PriorBaseline",
+    "split": "test",
+    "checkpoint_n_obs": 1,
+    "horizon_h": 3,
+    "sample_count": 779,
+    "positive_count": 75,
+    "negative_count": 704,
+    "prevalence": 0.0963,
+    "decision_threshold": 0.08,
+    "AP": 0.0963,
+    "ROC_AUC": 0.5,
+    "Accuracy": 0.0963,
+    "Precision": 0.0963,
+    "Recall": 1.0,
+    "F1": 0.1756,
+    "Brier_Score": 0.0871,
+    "Confusion_Matrix": [
+      [
+        0,
+        704
+      ],
+      [
+        0,
+        75
+      ]
+    ]
+  },
+  {
+    "model_name": "TFIDF_TextBaseline",
+    "split": "test",
+    "checkpoint_n_obs": 1,
+    "horizon_h": 3,
+    "sample_count": 779,
+    "positive_count": 75,
+    "negative_count": 704,
+    "prevalence": 0.0963,
+    "decision_threshold": 0.2,
+    "AP": 0.325,
+    "ROC_AUC": 0.8033,
+    "Accuracy": 0.887,
+    "Precision": 0.3556,
+    "Recall": 0.2133,
+    "F1": 0.2667,
+    "Brier_Score": 0.0782,
+    "Confusion_Matrix": [
+      [
+        675,
+        29
+      ],
+      [
+        59,
+        16
+      ]
+    ]
+  },
+  {
+    "model_name": "AggregateState_LogReg",
+    "split": "test",
+    "checkpoint_n_obs": 1,
+    "horizon_h": 3,
+    "sample_count": 779,
+    "positive_count": 75,
+    "negative_count": 704,
+    "prevalence": 0.0963,
+    "decision_threshold": 0.21,
+    "AP": 0.2722,
+    "ROC_AUC": 0.7821,
+    "Accuracy": 0.8768,
+    "Precision": 0.2941,
+    "Recall": 0.2,
+    "F1": 0.2381,
+    "Brier_Score": 0.0794,
+    "Confusion_Matrix": [
+      [
+        668,
+        36
+      ],
+      [
+        60,
+        15
+      ]
+    ]
+  },
+  {
+    "model_name": "OrderedState_LogReg",
+    "split": "test",
+    "checkpoint_n_obs": 1,
+    "horizon_h": 3,
+    "sample_count": 779,
+    "positive_count": 75,
+    "negative_count": 704,
+    "prevalence": 0.0963,
+    "decision_threshold": 0.21,
+    "AP": 0.272,
+    "ROC_AUC": 0.782,
+    "Accuracy": 0.8768,
+    "Precision": 0.2941,
+    "Recall": 0.2,
+    "F1": 0.2381,
+    "Brier_Score": 0.0794,
+    "Confusion_Matrix": [
+      [
+        668,
+        36
+      ],
+      [
+        60,
+        15
+      ]
+    ]
+  },
+  {
+    "model_name": "Hybrid_LogReg",
+    "split": "test",
+    "checkpoint_n_obs": 1,
+    "horizon_h": 3,
+    "sample_count": 779,
+    "positive_count": 75,
+    "negative_count": 704,
+    "prevalence": 0.0963,
+    "decision_threshold": 0.15,
+    "AP": 0.3425,
+    "ROC_AUC": 0.809,
+    "Accuracy": 0.8703,
+    "Precision": 0.3673,
+    "Recall": 0.48,
+    "F1": 0.4162,
+    "Brier_Score": 0.0759,
+    "Confusion_Matrix": [
+      [
+        642,
+        62
+      ],
+      [
+        39,
+        36
+      ]
+    ]
+  },
+  {
+    "model_name": "MajorityBaseline",
+    "split": "val",
+    "checkpoint_n_obs": 3,
+    "horizon_h": 3,
+    "sample_count": 625,
+    "positive_count": 199,
+    "negative_count": 426,
+    "prevalence": 0.3184,
+    "decision_threshold": 0.5,
+    "AP": 0.3184,
+    "ROC_AUC": 0.5,
+    "Accuracy": 0.6816,
+    "Precision": 0.0,
+    "Recall": 0.0,
+    "F1": 0.0,
+    "Brier_Score": 0.3184,
+    "Confusion_Matrix": [
+      [
+        426,
+        0
+      ],
+      [
+        199,
+        0
+      ]
+    ]
+  },
+  {
+    "model_name": "PriorBaseline",
+    "split": "val",
+    "checkpoint_n_obs": 3,
+    "horizon_h": 3,
+    "sample_count": 625,
+    "positive_count": 199,
+    "negative_count": 426,
+    "prevalence": 0.3184,
+    "decision_threshold": 0.32,
+    "AP": 0.3184,
+    "ROC_AUC": 0.5,
+    "Accuracy": 0.3184,
+    "Precision": 0.3184,
+    "Recall": 1.0,
+    "F1": 0.483,
+    "Brier_Score": 0.2171,
+    "Confusion_Matrix": [
+      [
+        0,
+        426
+      ],
+      [
+        0,
+        199
+      ]
+    ]
+  },
+  {
+    "model_name": "TFIDF_TextBaseline",
+    "split": "val",
+    "checkpoint_n_obs": 3,
+    "horizon_h": 3,
+    "sample_count": 625,
+    "positive_count": 199,
+    "negative_count": 426,
+    "prevalence": 0.3184,
+    "decision_threshold": 0.29,
+    "AP": 0.4783,
+    "ROC_AUC": 0.6488,
+    "Accuracy": 0.5952,
+    "Precision": 0.4161,
+    "Recall": 0.6734,
+    "F1": 0.5144,
+    "Brier_Score": 0.2021,
+    "Confusion_Matrix": [
+      [
+        238,
+        188
+      ],
+      [
+        65,
+        134
+      ]
+    ]
+  },
+  {
+    "model_name": "AggregateState_LogReg",
+    "split": "val",
+    "checkpoint_n_obs": 3,
+    "horizon_h": 3,
+    "sample_count": 625,
+    "positive_count": 199,
+    "negative_count": 426,
+    "prevalence": 0.3184,
+    "decision_threshold": 0.28,
+    "AP": 0.4373,
+    "ROC_AUC": 0.6289,
+    "Accuracy": 0.4896,
+    "Precision": 0.3673,
+    "Recall": 0.8342,
+    "F1": 0.51,
+    "Brier_Score": 0.2066,
+    "Confusion_Matrix": [
+      [
+        140,
+        286
+      ],
+      [
+        33,
+        166
+      ]
+    ]
+  },
+  {
+    "model_name": "OrderedState_LogReg",
+    "split": "val",
+    "checkpoint_n_obs": 3,
+    "horizon_h": 3,
+    "sample_count": 625,
+    "positive_count": 199,
+    "negative_count": 426,
+    "prevalence": 0.3184,
+    "decision_threshold": 0.25,
+    "AP": 0.4465,
+    "ROC_AUC": 0.6304,
+    "Accuracy": 0.472,
+    "Precision": 0.3615,
+    "Recall": 0.8593,
+    "F1": 0.5089,
+    "Brier_Score": 0.207,
+    "Confusion_Matrix": [
+      [
+        124,
+        302
+      ],
+      [
+        28,
+        171
+      ]
+    ]
+  },
+  {
+    "model_name": "Hybrid_LogReg",
+    "split": "val",
+    "checkpoint_n_obs": 3,
+    "horizon_h": 3,
+    "sample_count": 625,
+    "positive_count": 199,
+    "negative_count": 426,
+    "prevalence": 0.3184,
+    "decision_threshold": 0.27,
+    "AP": 0.4987,
+    "ROC_AUC": 0.6704,
+    "Accuracy": 0.5984,
+    "Precision": 0.4266,
+    "Recall": 0.7588,
+    "F1": 0.5461,
+    "Brier_Score": 0.2005,
+    "Confusion_Matrix": [
+      [
+        223,
+        203
+      ],
+      [
+        48,
+        151
+      ]
+    ]
+  },
+  {
+    "model_name": "MajorityBaseline",
+    "split": "test",
+    "checkpoint_n_obs": 3,
+    "horizon_h": 3,
+    "sample_count": 616,
+    "positive_count": 216,
+    "negative_count": 400,
+    "prevalence": 0.3506,
+    "decision_threshold": 0.5,
+    "AP": 0.3506,
+    "ROC_AUC": 0.5,
+    "Accuracy": 0.6494,
+    "Precision": 0.0,
+    "Recall": 0.0,
+    "F1": 0.0,
+    "Brier_Score": 0.3506,
+    "Confusion_Matrix": [
+      [
+        400,
+        0
+      ],
+      [
+        216,
+        0
+      ]
+    ]
+  },
+  {
+    "model_name": "PriorBaseline",
+    "split": "test",
+    "checkpoint_n_obs": 3,
+    "horizon_h": 3,
+    "sample_count": 616,
+    "positive_count": 216,
+    "negative_count": 400,
+    "prevalence": 0.3506,
+    "decision_threshold": 0.32,
+    "AP": 0.3506,
+    "ROC_AUC": 0.5,
+    "Accuracy": 0.3506,
+    "Precision": 0.3506,
+    "Recall": 1.0,
+    "F1": 0.5192,
+    "Brier_Score": 0.2282,
+    "Confusion_Matrix": [
+      [
+        0,
+        400
+      ],
+      [
+        0,
+        216
+      ]
+    ]
+  },
+  {
+    "model_name": "TFIDF_TextBaseline",
+    "split": "test",
+    "checkpoint_n_obs": 3,
+    "horizon_h": 3,
+    "sample_count": 616,
+    "positive_count": 216,
+    "negative_count": 400,
+    "prevalence": 0.3506,
+    "decision_threshold": 0.29,
+    "AP": 0.5601,
+    "ROC_AUC": 0.6735,
+    "Accuracy": 0.6104,
+    "Precision": 0.4605,
+    "Recall": 0.6481,
+    "F1": 0.5385,
+    "Brier_Score": 0.2051,
+    "Confusion_Matrix": [
+      [
+        236,
+        164
+      ],
+      [
+        76,
+        140
+      ]
+    ]
+  },
+  {
+    "model_name": "AggregateState_LogReg",
+    "split": "test",
+    "checkpoint_n_obs": 3,
+    "horizon_h": 3,
+    "sample_count": 616,
+    "positive_count": 216,
+    "negative_count": 400,
+    "prevalence": 0.3506,
+    "decision_threshold": 0.28,
+    "AP": 0.4661,
+    "ROC_AUC": 0.6162,
+    "Accuracy": 0.4805,
+    "Precision": 0.3807,
+    "Recall": 0.7685,
+    "F1": 0.5092,
+    "Brier_Score": 0.2201,
+    "Confusion_Matrix": [
+      [
+        130,
+        270
+      ],
+      [
+        50,
+        166
+      ]
+    ]
+  },
+  {
+    "model_name": "OrderedState_LogReg",
+    "split": "test",
+    "checkpoint_n_obs": 3,
+    "horizon_h": 3,
+    "sample_count": 616,
+    "positive_count": 216,
+    "negative_count": 400,
+    "prevalence": 0.3506,
+    "decision_threshold": 0.25,
+    "AP": 0.4397,
+    "ROC_AUC": 0.6059,
+    "Accuracy": 0.4886,
+    "Precision": 0.3883,
+    "Recall": 0.7963,
+    "F1": 0.522,
+    "Brier_Score": 0.2251,
+    "Confusion_Matrix": [
+      [
+        129,
+        271
+      ],
+      [
+        44,
+        172
+      ]
+    ]
+  },
+  {
+    "model_name": "Hybrid_LogReg",
+    "split": "test",
+    "checkpoint_n_obs": 3,
+    "horizon_h": 3,
+    "sample_count": 616,
+    "positive_count": 216,
+    "negative_count": 400,
+    "prevalence": 0.3506,
+    "decision_threshold": 0.27,
+    "AP": 0.5297,
+    "ROC_AUC": 0.6548,
+    "Accuracy": 0.5795,
+    "Precision": 0.4362,
+    "Recall": 0.6806,
+    "F1": 0.5316,
+    "Brier_Score": 0.212,
+    "Confusion_Matrix": [
+      [
+        210,
+        190
+      ],
+      [
+        69,
+        147
+      ]
+    ]
+  },
+  {
+    "model_name": "MajorityBaseline",
+    "split": "val",
+    "checkpoint_n_obs": 5,
+    "horizon_h": 3,
+    "sample_count": 358,
+    "positive_count": 201,
+    "negative_count": 157,
+    "prevalence": 0.5615,
+    "decision_threshold": 0.99,
+    "AP": 0.5615,
+    "ROC_AUC": 0.5,
+    "Accuracy": 0.5615,
+    "Precision": 0.5615,
+    "Recall": 1.0,
+    "F1": 0.7191,
+    "Brier_Score": 0.4385,
+    "Confusion_Matrix": [
+      [
+        0,
+        157
+      ],
+      [
+        0,
+        201
+      ]
+    ]
+  },
+  {
+    "model_name": "PriorBaseline",
+    "split": "val",
+    "checkpoint_n_obs": 5,
+    "horizon_h": 3,
+    "sample_count": 358,
+    "positive_count": 201,
+    "negative_count": 157,
+    "prevalence": 0.5615,
+    "decision_threshold": 0.51,
+    "AP": 0.5615,
+    "ROC_AUC": 0.5,
+    "Accuracy": 0.5615,
+    "Precision": 0.5615,
+    "Recall": 1.0,
+    "F1": 0.7191,
+    "Brier_Score": 0.2487,
+    "Confusion_Matrix": [
+      [
+        0,
+        157
+      ],
+      [
+        0,
+        201
+      ]
+    ]
+  },
+  {
+    "model_name": "TFIDF_TextBaseline",
+    "split": "val",
+    "checkpoint_n_obs": 5,
+    "horizon_h": 3,
+    "sample_count": 358,
+    "positive_count": 201,
+    "negative_count": 157,
+    "prevalence": 0.5615,
+    "decision_threshold": 0.36,
+    "AP": 0.614,
+    "ROC_AUC": 0.5727,
+    "Accuracy": 0.5726,
+    "Precision": 0.569,
+    "Recall": 0.9851,
+    "F1": 0.7213,
+    "Brier_Score": 0.246,
+    "Confusion_Matrix": [
+      [
+        7,
+        150
+      ],
+      [
+        3,
+        198
+      ]
+    ]
+  },
+  {
+    "model_name": "AggregateState_LogReg",
+    "split": "val",
+    "checkpoint_n_obs": 5,
+    "horizon_h": 3,
+    "sample_count": 358,
+    "positive_count": 201,
+    "negative_count": 157,
+    "prevalence": 0.5615,
+    "decision_threshold": 0.42,
+    "AP": 0.6284,
+    "ROC_AUC": 0.5926,
+    "Accuracy": 0.6229,
+    "Precision": 0.6058,
+    "Recall": 0.9403,
+    "F1": 0.7368,
+    "Brier_Score": 0.2399,
+    "Confusion_Matrix": [
+      [
+        34,
+        123
+      ],
+      [
+        12,
+        189
+      ]
+    ]
+  },
+  {
+    "model_name": "OrderedState_LogReg",
+    "split": "val",
+    "checkpoint_n_obs": 5,
+    "horizon_h": 3,
+    "sample_count": 358,
+    "positive_count": 201,
+    "negative_count": 157,
+    "prevalence": 0.5615,
+    "decision_threshold": 0.04,
+    "AP": 0.5978,
+    "ROC_AUC": 0.5578,
+    "Accuracy": 0.567,
+    "Precision": 0.5646,
+    "Recall": 1.0,
+    "F1": 0.7217,
+    "Brier_Score": 0.258,
+    "Confusion_Matrix": [
+      [
+        2,
+        155
+      ],
+      [
+        0,
+        201
+      ]
+    ]
+  },
+  {
+    "model_name": "Hybrid_LogReg",
+    "split": "val",
+    "checkpoint_n_obs": 5,
+    "horizon_h": 3,
+    "sample_count": 358,
+    "positive_count": 201,
+    "negative_count": 157,
+    "prevalence": 0.5615,
+    "decision_threshold": 0.26,
+    "AP": 0.6105,
+    "ROC_AUC": 0.5764,
+    "Accuracy": 0.5922,
+    "Precision": 0.5826,
+    "Recall": 0.9652,
+    "F1": 0.7266,
+    "Brier_Score": 0.2579,
+    "Confusion_Matrix": [
+      [
+        18,
+        139
+      ],
+      [
+        7,
+        194
+      ]
+    ]
+  },
+  {
+    "model_name": "MajorityBaseline",
+    "split": "test",
+    "checkpoint_n_obs": 5,
+    "horizon_h": 3,
+    "sample_count": 349,
+    "positive_count": 173,
+    "negative_count": 176,
+    "prevalence": 0.4957,
+    "decision_threshold": 0.99,
+    "AP": 0.4957,
+    "ROC_AUC": 0.5,
+    "Accuracy": 0.4957,
+    "Precision": 0.4957,
+    "Recall": 1.0,
+    "F1": 0.6628,
+    "Brier_Score": 0.5043,
+    "Confusion_Matrix": [
+      [
+        0,
+        176
+      ],
+      [
+        0,
+        173
+      ]
+    ]
+  },
+  {
+    "model_name": "PriorBaseline",
+    "split": "test",
+    "checkpoint_n_obs": 5,
+    "horizon_h": 3,
+    "sample_count": 349,
+    "positive_count": 173,
+    "negative_count": 176,
+    "prevalence": 0.4957,
+    "decision_threshold": 0.51,
+    "AP": 0.4957,
+    "ROC_AUC": 0.5,
+    "Accuracy": 0.4957,
+    "Precision": 0.4957,
+    "Recall": 1.0,
+    "F1": 0.6628,
+    "Brier_Score": 0.2502,
+    "Confusion_Matrix": [
+      [
+        0,
+        176
+      ],
+      [
+        0,
+        173
+      ]
+    ]
+  },
+  {
+    "model_name": "TFIDF_TextBaseline",
+    "split": "test",
+    "checkpoint_n_obs": 5,
+    "horizon_h": 3,
+    "sample_count": 349,
+    "positive_count": 173,
+    "negative_count": 176,
+    "prevalence": 0.4957,
+    "decision_threshold": 0.36,
+    "AP": 0.5763,
+    "ROC_AUC": 0.5414,
+    "Accuracy": 0.5043,
+    "Precision": 0.5,
+    "Recall": 0.9827,
+    "F1": 0.6628,
+    "Brier_Score": 0.2504,
+    "Confusion_Matrix": [
+      [
+        6,
+        170
+      ],
+      [
+        3,
+        170
+      ]
+    ]
+  },
+  {
+    "model_name": "AggregateState_LogReg",
+    "split": "test",
+    "checkpoint_n_obs": 5,
+    "horizon_h": 3,
+    "sample_count": 349,
+    "positive_count": 173,
+    "negative_count": 176,
+    "prevalence": 0.4957,
+    "decision_threshold": 0.42,
+    "AP": 0.5841,
+    "ROC_AUC": 0.5639,
+    "Accuracy": 0.5158,
+    "Precision": 0.5065,
+    "Recall": 0.9075,
+    "F1": 0.6501,
+    "Brier_Score": 0.247,
+    "Confusion_Matrix": [
+      [
+        23,
+        153
+      ],
+      [
+        16,
+        157
+      ]
+    ]
+  },
+  {
+    "model_name": "OrderedState_LogReg",
+    "split": "test",
+    "checkpoint_n_obs": 5,
+    "horizon_h": 3,
+    "sample_count": 349,
+    "positive_count": 173,
+    "negative_count": 176,
+    "prevalence": 0.4957,
+    "decision_threshold": 0.04,
+    "AP": 0.5686,
+    "ROC_AUC": 0.558,
+    "Accuracy": 0.4928,
+    "Precision": 0.4942,
+    "Recall": 0.9884,
+    "F1": 0.659,
+    "Brier_Score": 0.2597,
+    "Confusion_Matrix": [
+      [
+        1,
+        175
+      ],
+      [
+        2,
+        171
+      ]
+    ]
+  },
+  {
+    "model_name": "Hybrid_LogReg",
+    "split": "test",
+    "checkpoint_n_obs": 5,
+    "horizon_h": 3,
+    "sample_count": 349,
+    "positive_count": 173,
+    "negative_count": 176,
+    "prevalence": 0.4957,
+    "decision_threshold": 0.26,
+    "AP": 0.5707,
+    "ROC_AUC": 0.5563,
+    "Accuracy": 0.5014,
+    "Precision": 0.4985,
+    "Recall": 0.9422,
+    "F1": 0.652,
+    "Brier_Score": 0.2637,
+    "Confusion_Matrix": [
+      [
+        12,
+        164
+      ],
+      [
+        10,
+        163
+      ]
+    ]
+  }
+]

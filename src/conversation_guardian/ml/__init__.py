@@ -7,6 +7,21 @@ from .text_baseline import (
     PriorBaseline,
     CheckpointBenchmark,
 )
+from .sequence_features import (
+    HOSTILITY_LEXICON,
+    ORDERED_STATES,
+    classify_message_state,
+    extract_message_signals,
+    extract_aggregate_features,
+    extract_ordered_features,
+    get_aggregate_feature_names,
+    get_ordered_feature_names,
+    SequenceFeatureExtractor,
+    MajorityBaseline,
+    DenseStateClassifier,
+    HybridSequencePipeline,
+    SequenceCheckpointBenchmark,
+)
 
 __all__ = [
     "build_tfidf_pipeline",
@@ -14,4 +29,17 @@ __all__ = [
     "compute_benchmark_metrics",
     "PriorBaseline",
     "CheckpointBenchmark",
+    "HOSTILITY_LEXICON",
+    "ORDERED_STATES",
+    "classify_message_state",
+    "extract_message_signals",
+    "extract_aggregate_features",
+    "extract_ordered_features",
+    "get_aggregate_feature_names",
+    "get_ordered_feature_names",
+    "SequenceFeatureExtractor",
+    "MajorityBaseline",
+    "DenseStateClassifier",
+    "HybridSequencePipeline",
+    "SequenceCheckpointBenchmark",
 ]
