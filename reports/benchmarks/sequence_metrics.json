@@ -36,22 +36,22 @@
     "positive_count": 56,
     "negative_count": 734,
     "prevalence": 0.0709,
-    "decision_threshold": 0.08,
+    "decision_threshold": 0.5,
     "AP": 0.0709,
     "ROC_AUC": 0.5,
-    "Accuracy": 0.0709,
-    "Precision": 0.0709,
-    "Recall": 1.0,
-    "F1": 0.1324,
+    "Accuracy": 0.9291,
+    "Precision": 0.0,
+    "Recall": 0.0,
+    "F1": 0.0,
     "Brier_Score": 0.0661,
     "Confusion_Matrix": [
       [
-        0,
-        734
+        734,
+        0
       ],
       [
-        0,
-        56
+        56,
+        0
       ]
     ]
   },
@@ -204,22 +204,22 @@
     "positive_count": 75,
     "negative_count": 704,
     "prevalence": 0.0963,
-    "decision_threshold": 0.08,
+    "decision_threshold": 0.5,
     "AP": 0.0963,
     "ROC_AUC": 0.5,
-    "Accuracy": 0.0963,
-    "Precision": 0.0963,
-    "Recall": 1.0,
-    "F1": 0.1756,
+    "Accuracy": 0.9037,
+    "Precision": 0.0,
+    "Recall": 0.0,
+    "F1": 0.0,
     "Brier_Score": 0.0871,
     "Confusion_Matrix": [
       [
-        0,
-        704
+        704,
+        0
       ],
       [
-        0,
-        75
+        75,
+        0
       ]
     ]
   },
@@ -372,22 +372,22 @@
     "positive_count": 199,
     "negative_count": 426,
     "prevalence": 0.3184,
-    "decision_threshold": 0.32,
+    "decision_threshold": 0.5,
     "AP": 0.3184,
     "ROC_AUC": 0.5,
-    "Accuracy": 0.3184,
-    "Precision": 0.3184,
-    "Recall": 1.0,
-    "F1": 0.483,
+    "Accuracy": 0.6816,
+    "Precision": 0.0,
+    "Recall": 0.0,
+    "F1": 0.0,
     "Brier_Score": 0.2171,
     "Confusion_Matrix": [
       [
-        0,
-        426
+        426,
+        0
       ],
       [
-        0,
-        199
+        199,
+        0
       ]
     ]
   },
@@ -540,22 +540,22 @@
     "positive_count": 216,
     "negative_count": 400,
     "prevalence": 0.3506,
-    "decision_threshold": 0.32,
+    "decision_threshold": 0.5,
     "AP": 0.3506,
     "ROC_AUC": 0.5,
-    "Accuracy": 0.3506,
-    "Precision": 0.3506,
-    "Recall": 1.0,
-    "F1": 0.5192,
+    "Accuracy": 0.6494,
+    "Precision": 0.0,
+    "Recall": 0.0,
+    "F1": 0.0,
     "Brier_Score": 0.2282,
     "Confusion_Matrix": [
       [
-        0,
-        400
+        400,
+        0
       ],
       [
-        0,
-        216
+        216,
+        0
       ]
     ]
   },
@@ -680,7 +680,7 @@
     "positive_count": 201,
     "negative_count": 157,
     "prevalence": 0.5615,
-    "decision_threshold": 0.99,
+    "decision_threshold": 0.5,
     "AP": 0.5615,
     "ROC_AUC": 0.5,
     "Accuracy": 0.5615,
@@ -708,7 +708,7 @@
     "positive_count": 201,
     "negative_count": 157,
     "prevalence": 0.5615,
-    "decision_threshold": 0.51,
+    "decision_threshold": 0.5,
     "AP": 0.5615,
     "ROC_AUC": 0.5,
     "Accuracy": 0.5615,
@@ -848,7 +848,7 @@
     "positive_count": 173,
     "negative_count": 176,
     "prevalence": 0.4957,
-    "decision_threshold": 0.99,
+    "decision_threshold": 0.5,
     "AP": 0.4957,
     "ROC_AUC": 0.5,
     "Accuracy": 0.4957,
@@ -876,7 +876,7 @@
     "positive_count": 173,
     "negative_count": 176,
     "prevalence": 0.4957,
-    "decision_threshold": 0.51,
+    "decision_threshold": 0.5,
     "AP": 0.4957,
     "ROC_AUC": 0.5,
     "Accuracy": 0.4957,

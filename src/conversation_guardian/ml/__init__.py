@@ -21,7 +21,9 @@ from .sequence_features import (
     DenseStateClassifier,
     HybridSequencePipeline,
     SequenceCheckpointBenchmark,
+    select_deployable_model,
 )
+from .predictor import ConversationGuardianPredictor
 
 __all__ = [
     "build_tfidf_pipeline",
@@ -42,4 +44,6 @@ __all__ = [
     "DenseStateClassifier",
     "HybridSequencePipeline",
     "SequenceCheckpointBenchmark",
+    "select_deployable_model",
+    "ConversationGuardianPredictor",
 ]

@@ -715,22 +715,39 @@ class SequenceCheckpointBenchmark:
         y_val: np.ndarray,
     ) -> Dict[str, Dict[str, Any]]:
         """
-        Select decision threshold maximizing F1 on validation predictions only.
+        Select decision threshold maximizing F1 on validation predictions for learned models.
+        Baselines (MajorityBaseline, PriorBaseline) use their fixed 0.5 decision rule
+        and are not tuned on validation data.
         Uses higher-threshold tie-breaking and freezes thresholds for test evaluation.
         """
+        from sklearn.metrics import f1_score
         val_probs = self.predict_probabilities(texts_val, agg_features_val, ord_features_val)
         summary: Dict[str, Dict[str, Any]] = {}
 
         for m_name in self.MODEL_NAMES:
-            thresh, best_f1, fallback = tune_threshold_f1(y_val, val_probs[m_name], default_fallback=0.5)
-            self.thresholds[m_name] = thresh
-            self.val_f1s[m_name] = best_f1
-            self.fallbacks[m_name] = fallback
-            summary[m_name] = {
-                "threshold": thresh,
-                "val_f1": best_f1,
-                "fallback_used": fallback,
-            }
+            if m_name in ("MajorityBaseline", "PriorBaseline"):
+                # Baselines use fixed 0.5 decision rule; not tuned on validation
+                thresh = 0.5
+                y_pred = (val_probs[m_name] >= thresh).astype(int)
+                val_f1 = float(f1_score(y_val, y_pred, zero_division=0))
+                self.thresholds[m_name] = thresh
+                self.val_f1s[m_name] = val_f1
+                self.fallbacks[m_name] = False
+                summary[m_name] = {
+                    "threshold": thresh,
+                    "val_f1": val_f1,
+                    "fallback_used": False,
+                }
+            else:
+                thresh, best_f1, fallback = tune_threshold_f1(y_val, val_probs[m_name], default_fallback=0.5)
+                self.thresholds[m_name] = thresh
+                self.val_f1s[m_name] = best_f1
+                self.fallbacks[m_name] = fallback
+                summary[m_name] = {
+                    "threshold": thresh,
+                    "val_f1": best_f1,
+                    "fallback_used": fallback,
+                }
 
         return summary
 
@@ -759,4 +776,28 @@ class SequenceCheckpointBenchmark:
             results[m_name] = metrics
 
         return results
+
+
+def select_deployable_model(val_metrics_for_checkpoint: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """
+    Select the deployable model for a checkpoint based strictly on validation metrics.
+    Primary selection criterion: validation Average Precision (AP).
+    Deterministic tie-breaking: higher validation F1, followed by model name.
+    
+    Excludes non-learned baselines (MajorityBaseline, PriorBaseline).
+    """
+    learned_metrics = [
+        m for m in val_metrics_for_checkpoint
+        if m["model_name"] not in ("MajorityBaseline", "PriorBaseline")
+    ]
+    if not learned_metrics:
+        raise ValueError("No learned candidate models provided for deployable model selection.")
+
+    # Sort key: AP descending, F1 descending, model_name ascending (for deterministic tie-breaking)
+    sorted_candidates = sorted(
+        learned_metrics,
+        key=lambda m: (-float(m["AP"]), -float(m["F1"]), m["model_name"]),
+    )
+    return sorted_candidates[0]
+
 

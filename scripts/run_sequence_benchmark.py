@@ -32,6 +32,7 @@ from conversation_guardian.ml.sequence_features import (
     extract_message_signals,
     SequenceFeatureExtractor,
     SequenceCheckpointBenchmark,
+    select_deployable_model,
 )
 
 
@@ -246,6 +247,56 @@ def main():
         for m_name in SequenceCheckpointBenchmark.MODEL_NAMES:
             all_metrics.append(val_eval[m_name])
 
+        # Select deployable model for this checkpoint based strictly on validation AP
+        val_candidate = select_deployable_model(list(val_eval.values()))
+        chosen_model_name = val_candidate["model_name"]
+        print(f"  -> [Deployable Selection] Checkpoint n={n_obs}: Selected '{chosen_model_name}' "
+              f"(Val AP={val_candidate['AP']:.4f}, Val F1={val_candidate['F1']:.4f}, Thresh={val_candidate['decision_threshold']:.4f})")
+
+        # Determine feature mode and model object for bundle
+        if chosen_model_name == "Hybrid_LogReg":
+            model_obj = benchmark.hybrid_model
+            feat_mode = "hybrid"
+            feat_names = ord_extractor.feature_names
+        elif chosen_model_name == "AggregateState_LogReg":
+            model_obj = benchmark.aggregate_model
+            feat_mode = "aggregate"
+            feat_names = agg_extractor.feature_names
+        elif chosen_model_name == "OrderedState_LogReg":
+            model_obj = benchmark.ordered_model
+            feat_mode = "ordered"
+            feat_names = ord_extractor.feature_names
+        elif chosen_model_name == "TFIDF_TextBaseline":
+            model_obj = benchmark.tfidf_model
+            feat_mode = "text_tfidf"
+            feat_names = []
+        else:
+            raise ValueError(f"Unexpected chosen model family: {chosen_model_name}")
+
+        predictors_dir = models_dir / "selected_predictors"
+        predictors_dir.mkdir(parents=True, exist_ok=True)
+        bundle_data = {
+            "checkpoint_n_obs": n_obs,
+            "horizon_h": args.horizon,
+            "model_family": chosen_model_name,
+            "model_object": model_obj,
+            "threshold": float(val_candidate["decision_threshold"]),
+            "val_ap": float(val_candidate["AP"]),
+            "val_f1": float(val_candidate["F1"]),
+            "val_roc_auc": float(val_candidate["ROC_AUC"]),
+            "feature_mode": feat_mode,
+            "feature_names": feat_names,
+            "version": "1.0.0",
+            "metadata": {
+                "dataset_version": "cga_v1",
+                "selection_criterion": "validation_average_precision",
+                "decision_rule": "f1_optimal_on_validation",
+            },
+        }
+        bundle_path = predictors_dir / f"predictor_n{n_obs}.joblib"
+        joblib.dump(bundle_data, bundle_path)
+        print(f"  -> Saved deployable predictor bundle to {bundle_path}")
+
         # Evaluate test set with frozen thresholds
         print("  -> Evaluating test partition with frozen validation thresholds...")
         test_eval = benchmark.evaluate_split(te_texts, te_agg, te_ord, y_test, "test")
@@ -270,7 +321,7 @@ def main():
                 "Confusion_Matrix": json.dumps(m_res["Confusion_Matrix"]),
             })
 
-        # Save model artifacts under models/
+        # Save individual model artifacts under models/
         joblib.dump(benchmark.aggregate_model, models_dir / f"aggregate_state_logreg_n{n_obs}.joblib")
         joblib.dump(benchmark.ordered_model, models_dir / f"ordered_state_logreg_n{n_obs}.joblib")
         joblib.dump(benchmark.hybrid_model, models_dir / f"hybrid_logreg_n{n_obs}.joblib")
