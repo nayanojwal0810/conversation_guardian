@@ -1,0 +1,22 @@
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: conversation_guardian_mongodb
+    restart: unless-stopped
+    ports:
+      # Bind strictly to localhost (127.0.0.1) rather than exposing publicly (0.0.0.0)
+      - "127.0.0.1:27017:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=conversation_guardian
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test: ["CMD-SHELL", "mongosh --eval 'db.runCommand(\"ping\").ok' --quiet"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  mongodb_data:
+    name: conversation_guardian_mongodb_data

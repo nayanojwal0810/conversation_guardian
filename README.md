@@ -183,3 +183,115 @@ Trains a word-level `ConversationGRU` sequence model directly on ordered dialogu
 1. **Recurrent Modeling vs Tabular Baselines**: Training a word-level GRU directly on dialogue tokens did not outperform the feature-engineered baselines on validation AP (Val AP at $n=1$: 0.2583 vs Hybrid's 0.3409; at $n=3$: 0.3623 vs Hybrid's 0.4987; at $n=5$: 0.5849 vs AggregateState's 0.6284).
 2. **Model Selection Gate**: Following our validation-first selection criterion, the incumbent models (`Hybrid_LogReg` for $n=1, 3$ and `AggregateState_LogReg` for $n=5$) retain their deployable status.
 3. **Computational Tradeoff**: The GRU requires 347,009 trainable parameters and significantly more training time on CPU than regularized logistic regression, without yielding superior ranking discrimination on short conversational contexts.
+
+---
+
+## 9. MongoDB Persistence & Moderator Audit Workflow (Task 6)
+
+### Architecture Overview
+
+ConversationGuardian includes a persistence and audit layer built on MongoDB and PyMongo, enabling persistent storage of multi-checkpoint risk assessments, moderator decisions, and immutable audit event trails.
+
+The persistence architecture consists of four distinct collections:
+
+| Collection | Role & Purpose | Mutability | Primary & Secondary Indexes |
+|---|---|---|---|
+| `conversations` | Thread metadata, channel origin, current overall status, and pointer to latest assessment. | Mutable (upsert) | `conversation_id` (Unique)<br>`review_status` |
+| `risk_assessments` | Immutable record of inference results ($n \in \{1, 3, 5\}$, $H=3$, uncalibrated risk score, threshold, alert flag, model metadata, heuristic signal summary). | Append-only (Historical) | `assessment_id` (Unique)<br>`(conversation_id, created_at)` (Compound)<br>`(checkpoint_n_obs, alert)`<br>`(alert, created_at)` |
+| `moderator_reviews` | Current active review state and decision for an assessment. | Mutable (upsert) | `assessment_id` (Unique)<br>`conversation_id`<br>`review_status` |
+| `review_events` | Comprehensive audit trail recording every moderator action (creation, status change, decision change). | Append-only (Strictly immutable) | `event_id` (Unique)<br>`(conversation_id, event_time)` (Compound)<br>`(assessment_id, event_time)` |
+
+### Why Review History Is Separate From Current Review Record
+
+Moderation platforms operate in an adversarial and regulatory environment where decisions may be revised upon appeal, escalation, or peer review. 
+1. **Current State Query Efficiency**: Real-time moderation queues and dashboard panels query `moderator_reviews` directly by `review_status` (e.g., finding all `IN_REVIEW` or `PENDING` tickets) without scanning historical logs.
+2. **Tamper-Evident Auditability**: `review_events` is strictly append-only. The application exposes no update or delete primitives for review events. When a moderator adjusts a decision (e.g., from `NO_ACTION` to `WARN_USER`), the event log retains both the previous and new states, timestamp, and actor ID.
+3. **Atomicity and Failure Recovery**: On standalone MongoDB nodes (without a replica set), multi-document ACID transactions are not available. State transitions sequentially update `moderator_reviews` and append to `review_events`. In high-availability environments running a replica set, operations can execute within transactional sessions (`client.start_session()`).
+
+### Configuration & Docker Compose Setup
+
+Configuration is resolved via standard environment variables:
+
+| Variable | Default Value | Description |
+|---|---|---|
+| `MONGODB_URI` | `mongodb://127.0.0.1:27017` | MongoDB connection URI (must not expose credentials in Git). |
+| `MONGODB_DATABASE` | `conversation_guardian` | Target MongoDB database name. |
+
+A template is provided in `.env.example`.
+
+#### Running MongoDB Locally via Docker Compose
+
+```bash
+# 1. Start MongoDB in detached mode
+docker compose up -d
+
+# 2. Check container health status
+docker compose ps
+
+# 3. View service logs
+docker compose logs -f mongodb
+
+# 4. Stop MongoDB and preserve named volume
+docker compose down
+```
+
+The `docker-compose.yml` binds strictly to `127.0.0.1:27017` to prevent accidental public network exposure and utilizes a named persistent volume (`mongodb_data`).
+
+### Running the Demonstration Script
+
+A standalone demonstration script exercises the full persistence lifecycle:
+
+```bash
+python scripts/demo_mongodb_workflow.py
+```
+
+The script executes 8 automated workflow steps:
+1. Connects to MongoDB with connection ping verification.
+2. Applies collection `$jsonSchema` validators and creates indexes.
+3. Initializes the deployable predictor and storage workflow service.
+4. Creates or retrieves a demonstration conversation record.
+5. Evaluates dialogue prefixes at checkpoints $n=1, 3, 5$ and stores risk assessments.
+6. Reads back the chronological assessment history.
+7. Simulates moderator review transitions (`CREATE_REVIEW` -> `CHANGE_STATUS` -> `UPDATE_DECISION`) and captures the append-only event trail.
+8. Runs aggregation pipelines counting alerts by checkpoint and reviews by status.
+
+### Important Aggregation Pipelines
+
+#### 1. Total Alerts by Checkpoint
+```python
+[
+    {"$match": {"alert": True}},
+    {"$group": {"_id": "$checkpoint_n_obs", "alert_count": {"$sum": 1}}},
+    {"$sort": {"_id": 1}},
+    {"$project": {"checkpoint_n_obs": "$_id", "alert_count": 1, "_id": 0}},
+]
+```
+
+#### 2. Moderator Reviews by Status
+```python
+[
+    {"$group": {"_id": "$review_status", "review_count": {"$sum": 1}}},
+    {"$sort": {"_id": 1}},
+    {"$project": {"review_status": "$_id", "review_count": 1, "_id": 0}},
+]
+```
+
+### Verification & Test Suite
+
+The storage test suite is divided into isolated unit tests and live integration tests:
+
+```bash
+# Run isolated unit tests (using mongomock test double)
+python -m pytest tests/test_storage_unit.py -v
+
+# Run live MongoDB integration tests (executes against live instance if running, otherwise skips gracefully)
+python -m pytest tests/test_storage_integration.py -v
+
+# Run entire repository test suite
+python -m pytest tests/ -v
+```
+
+Observed test execution:
+- **Unit Tests:** 10 passed (covering connection failure handling, field/enum validation, conversation CRUD, assessment ordering, unique constraints, review workflows, append-only event integrity, query filters, aggregations, and workflow integration).
+- **Integration Tests:** 4 skipped when no live MongoDB service is reachable (or 4 passed against a live container).
+- **Total Test Suite:** 54 passed, 4 skipped across all model, pipeline, and storage suites.
