@@ -1,0 +1,4 @@
+checkpoint,model,split,sample_count,positive_count,prevalence,threshold,AP,ROC_AUC,Accuracy,Precision,Recall,F1,Brier_Score,Confusion_Matrix,trainable_params,training_time_sec
+1,Recurrent_GRU,test,779,75,0.0963,0.23,0.2655,0.7371,0.8922,0.3548,0.1467,0.2075,0.0844,"[[684, 20], [64, 11]]",347009,81.16
+3,Recurrent_GRU,test,616,216,0.3506,0.03,0.4482,0.6061,0.3506,0.3506,1.0,0.5192,0.246,"[[0, 400], [0, 216]]",347009,538.93
+5,Recurrent_GRU,test,349,173,0.4957,0.17,0.5501,0.5377,0.4986,0.4971,0.9942,0.6628,0.2715,"[[2, 174], [1, 172]]",347009,993.03

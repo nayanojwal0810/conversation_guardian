@@ -206,6 +206,9 @@ class ConversationGuardianPredictor:
             prefix_text = "\n\n".join(clean_messages)
             prob = float(model.predict_proba([prefix_text])[0, 1])
 
+        elif feature_mode == "recurrent":
+            prob = float(model.predict_proba([clean_messages])[0, 1])
+
         else:
             raise ValueError(f"Unknown bundle feature mode: '{feature_mode}'")
 

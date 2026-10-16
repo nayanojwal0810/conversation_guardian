@@ -1,0 +1,170 @@
+[
+  {
+    "model_name": "Recurrent_GRU",
+    "split": "val",
+    "checkpoint_n_obs": 1,
+    "horizon_h": 3,
+    "sample_count": 790,
+    "positive_count": 56,
+    "negative_count": 734,
+    "prevalence": 0.0709,
+    "decision_threshold": 0.23,
+    "AP": 0.2583,
+    "ROC_AUC": 0.7451,
+    "Accuracy": 0.9266,
+    "Precision": 0.4706,
+    "Recall": 0.2857,
+    "F1": 0.3556,
+    "Brier_Score": 0.0599,
+    "Confusion_Matrix": [
+      [
+        716,
+        18
+      ],
+      [
+        40,
+        16
+      ]
+    ]
+  },
+  {
+    "model_name": "Recurrent_GRU",
+    "split": "test",
+    "checkpoint_n_obs": 1,
+    "horizon_h": 3,
+    "sample_count": 779,
+    "positive_count": 75,
+    "negative_count": 704,
+    "prevalence": 0.0963,
+    "decision_threshold": 0.23,
+    "AP": 0.2655,
+    "ROC_AUC": 0.7371,
+    "Accuracy": 0.8922,
+    "Precision": 0.3548,
+    "Recall": 0.1467,
+    "F1": 0.2075,
+    "Brier_Score": 0.0844,
+    "Confusion_Matrix": [
+      [
+        684,
+        20
+      ],
+      [
+        64,
+        11
+      ]
+    ]
+  },
+  {
+    "model_name": "Recurrent_GRU",
+    "split": "val",
+    "checkpoint_n_obs": 3,
+    "horizon_h": 3,
+    "sample_count": 625,
+    "positive_count": 199,
+    "negative_count": 426,
+    "prevalence": 0.3184,
+    "decision_threshold": 0.03,
+    "AP": 0.3623,
+    "ROC_AUC": 0.5222,
+    "Accuracy": 0.3184,
+    "Precision": 0.3184,
+    "Recall": 1.0,
+    "F1": 0.483,
+    "Brier_Score": 0.2458,
+    "Confusion_Matrix": [
+      [
+        0,
+        426
+      ],
+      [
+        0,
+        199
+      ]
+    ]
+  },
+  {
+    "model_name": "Recurrent_GRU",
+    "split": "test",
+    "checkpoint_n_obs": 3,
+    "horizon_h": 3,
+    "sample_count": 616,
+    "positive_count": 216,
+    "negative_count": 400,
+    "prevalence": 0.3506,
+    "decision_threshold": 0.03,
+    "AP": 0.4482,
+    "ROC_AUC": 0.6061,
+    "Accuracy": 0.3506,
+    "Precision": 0.3506,
+    "Recall": 1.0,
+    "F1": 0.5192,
+    "Brier_Score": 0.246,
+    "Confusion_Matrix": [
+      [
+        0,
+        400
+      ],
+      [
+        0,
+        216
+      ]
+    ]
+  },
+  {
+    "model_name": "Recurrent_GRU",
+    "split": "val",
+    "checkpoint_n_obs": 5,
+    "horizon_h": 3,
+    "sample_count": 358,
+    "positive_count": 201,
+    "negative_count": 157,
+    "prevalence": 0.5615,
+    "decision_threshold": 0.17,
+    "AP": 0.5849,
+    "ROC_AUC": 0.5029,
+    "Accuracy": 0.5642,
+    "Precision": 0.563,
+    "Recall": 1.0,
+    "F1": 0.7204,
+    "Brier_Score": 0.2763,
+    "Confusion_Matrix": [
+      [
+        1,
+        156
+      ],
+      [
+        0,
+        201
+      ]
+    ]
+  },
+  {
+    "model_name": "Recurrent_GRU",
+    "split": "test",
+    "checkpoint_n_obs": 5,
+    "horizon_h": 3,
+    "sample_count": 349,
+    "positive_count": 173,
+    "negative_count": 176,
+    "prevalence": 0.4957,
+    "decision_threshold": 0.17,
+    "AP": 0.5501,
+    "ROC_AUC": 0.5377,
+    "Accuracy": 0.4986,
+    "Precision": 0.4971,
+    "Recall": 0.9942,
+    "F1": 0.6628,
+    "Brier_Score": 0.2715,
+    "Confusion_Matrix": [
+      [
+        2,
+        174
+      ],
+      [
+        1,
+        172
+      ]
+    ]
+  }
+]

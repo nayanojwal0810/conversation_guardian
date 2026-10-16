@@ -128,3 +128,58 @@ python scripts/run_baseline_benchmark.py
 ```
 
 This fits models strictly on eligible training examples, selects optimal F1 classification thresholds on validation predictions, freezes the thresholds, and reports final test metrics (AP, ROC-AUC, Precision, Recall, F1, Accuracy, Brier score, Confusion matrix).
+
+---
+
+## 8. Sequential & Recurrent Modeling Benchmarks (Tasks 3, 4, 5)
+
+### Running the Sequence State Benchmark (Task 3)
+```bash
+python scripts/run_sequence_benchmark.py
+```
+Fits and benchmarks the text baseline alongside orderless Aggregate-State, Ordered-State (transitions, trigrams, position states, trajectories), and Hybrid (TF-IDF + Ordered State) models. Automatically exports deployable predictor bundles under `models/selected_predictors/`.
+
+### Running the Deployable Prediction Service Smoke Test (Task 4)
+```bash
+python scripts/smoke_test_predictor.py
+```
+Executes inference via `ConversationGuardianPredictor` across checkpoints $n=1, 3, 5$, producing JSON risk scores, validation thresholds, alert flags, and compact heuristic tone summaries.
+
+### Running the Recurrent Sequence Model Benchmark (Task 5)
+```bash
+python scripts/run_recurrent_benchmark.py
+```
+Trains a word-level `ConversationGRU` sequence model directly on ordered dialogue turns with early stopping on validation Average Precision (AP).
+
+### Model Comparison Summary (Test Set, $H = 3$)
+
+| $n$ | Model | Test Prev | Frozen Thresh | AP | ROC-AUC | Accuracy | Precision | Recall | $F_1$ | Brier Score |
+|---|---|---|---|---|---|---|---|---|---|---|
+| **1** | **MajorityBaseline** | 0.0963 | 0.50 | 0.0963 | 0.5000 | 0.9037 | 0.0000 | 0.0000 | 0.0000 | 0.0963 |
+| 1 | **PriorBaseline** | 0.0963 | 0.50 | 0.0963 | 0.5000 | 0.9037 | 0.0000 | 0.0000 | 0.0000 | 0.0871 |
+| 1 | **TFIDF_TextBaseline** | 0.0963 | 0.20 | 0.3250 | 0.8033 | 0.8870 | 0.3556 | 0.2133 | 0.2667 | 0.0782 |
+| 1 | **AggregateState_LogReg** | 0.0963 | 0.21 | 0.2722 | 0.7821 | 0.8768 | 0.2941 | 0.2000 | 0.2381 | 0.0794 |
+| 1 | **OrderedState_LogReg** | 0.0963 | 0.21 | 0.2720 | 0.7820 | 0.8768 | 0.2941 | 0.2000 | 0.2381 | 0.0794 |
+| 1 | **Hybrid_LogReg** (Deployable) | 0.0963 | 0.15 | **0.3425** | **0.8090** | 0.8703 | **0.3673** | **0.4800** | **0.4162** | **0.0759** |
+| 1 | **Recurrent_GRU** | 0.0963 | 0.23 | 0.2655 | 0.7371 | 0.8922 | 0.3548 | 0.1467 | 0.2075 | 0.0844 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| **3** | **MajorityBaseline** | 0.3506 | 0.50 | 0.3506 | 0.5000 | 0.6494 | 0.0000 | 0.0000 | 0.0000 | 0.3506 |
+| 3 | **PriorBaseline** | 0.3506 | 0.50 | 0.3506 | 0.5000 | 0.6494 | 0.0000 | 0.0000 | 0.0000 | 0.2282 |
+| 3 | **TFIDF_TextBaseline** | 0.3506 | 0.29 | **0.5601** | **0.6735** | **0.6104** | **0.4605** | 0.6481 | **0.5385** | **0.2051** |
+| 3 | **AggregateState_LogReg** | 0.3506 | 0.28 | 0.4661 | 0.6162 | 0.4805 | 0.3807 | 0.7685 | 0.5092 | 0.2201 |
+| 3 | **OrderedState_LogReg** | 0.3506 | 0.25 | 0.4397 | 0.6059 | 0.4886 | 0.3883 | 0.7963 | 0.5220 | 0.2251 |
+| 3 | **Hybrid_LogReg** (Deployable) | 0.3506 | 0.27 | 0.5297 | 0.6548 | 0.5795 | 0.4362 | 0.6806 | 0.5316 | 0.2120 |
+| 3 | **Recurrent_GRU** | 0.3506 | 0.03 | 0.4482 | 0.6061 | 0.3506 | 0.3506 | 1.0000 | 0.5192 | 0.2460 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| **5** | **MajorityBaseline** | 0.4957 | 0.50 | 0.4957 | 0.5000 | 0.4957 | 0.4957 | 1.0000 | 0.6628 | 0.5043 |
+| 5 | **PriorBaseline** | 0.4957 | 0.50 | 0.4957 | 0.5000 | 0.4957 | 0.4957 | 1.0000 | 0.6628 | 0.2502 |
+| 5 | **TFIDF_TextBaseline** | 0.4957 | 0.36 | 0.5763 | 0.5414 | 0.5043 | 0.5000 | 0.9827 | 0.6628 | 0.2504 |
+| 5 | **AggregateState_LogReg** (Deployable) | 0.4957 | 0.42 | **0.5841** | **0.5639** | **0.5158** | **0.5065** | 0.9075 | 0.6501 | **0.2470** |
+| 5 | **OrderedState_LogReg** | 0.4957 | 0.04 | 0.5686 | 0.5580 | 0.4928 | 0.4942 | 0.9884 | 0.6590 | 0.2597 |
+| 5 | **Hybrid_LogReg** | 0.4957 | 0.26 | 0.5707 | 0.5563 | 0.5014 | 0.4985 | 0.9422 | 0.6520 | 0.2637 |
+| 5 | **Recurrent_GRU** | 0.4957 | 0.17 | 0.5501 | 0.5377 | 0.4986 | 0.4971 | 0.9942 | 0.6628 | 0.2715 |
+
+### Empirical Findings & Limitations
+1. **Recurrent Modeling vs Tabular Baselines**: Training a word-level GRU directly on dialogue tokens did not outperform the feature-engineered baselines on validation AP (Val AP at $n=1$: 0.2583 vs Hybrid's 0.3409; at $n=3$: 0.3623 vs Hybrid's 0.4987; at $n=5$: 0.5849 vs AggregateState's 0.6284).
+2. **Model Selection Gate**: Following our validation-first selection criterion, the incumbent models (`Hybrid_LogReg` for $n=1, 3$ and `AggregateState_LogReg` for $n=5$) retain their deployable status.
+3. **Computational Tradeoff**: The GRU requires 347,009 trainable parameters and significantly more training time on CPU than regularized logistic regression, without yielding superior ranking discrimination on short conversational contexts.

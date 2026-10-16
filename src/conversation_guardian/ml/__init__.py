@@ -24,6 +24,11 @@ from .sequence_features import (
     select_deployable_model,
 )
 from .predictor import ConversationGuardianPredictor
+from .recurrent_model import (
+    Vocabulary,
+    ConversationGRU,
+    RecurrentSequenceClassifier,
+)
 
 __all__ = [
     "build_tfidf_pipeline",
@@ -46,4 +51,7 @@ __all__ = [
     "SequenceCheckpointBenchmark",
     "select_deployable_model",
     "ConversationGuardianPredictor",
+    "Vocabulary",
+    "ConversationGRU",
+    "RecurrentSequenceClassifier",
 ]
