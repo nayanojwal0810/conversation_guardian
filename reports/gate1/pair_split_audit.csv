@@ -1,0 +1,5 @@
+split,total_conversations,unique_mutual_pairs,conversations_with_mutual_reciprocity,reciprocity_compliance_pct,cross_split_pair_violations,opposite_label_concordance_count,same_label_pair_violations
+train,2508,1254,2508,100.0,0,2508,0
+val,840,420,840,100.0,0,840,0
+test,840,420,840,100.0,0,840,0
+overall,4188,2094,4188,100.0,0,4188,0

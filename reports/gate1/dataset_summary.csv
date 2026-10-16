@@ -1,0 +1,5 @@
+split,total_conversations,total_raw_utterances,section_header_utterances,filtered_dialogue_utterances,attack_annotated_conversations,healthy_conversations,attack_prevalence_pct,dialogue_length_mean,dialogue_length_median,dialogue_length_min,dialogue_length_max
+train,2508,18042,2298,15744,1254,1254,50.0,6.28,6.0,3,18
+val,840,6008,769,5239,420,420,50.0,6.24,6.0,3,19
+test,840,5971,766,5205,420,420,50.0,6.2,6.0,3,16
+overall,4188,30021,3833,26188,2094,2094,50.0,6.25,6.0,3,19

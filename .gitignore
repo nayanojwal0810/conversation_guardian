@@ -1,0 +1,46 @@
+# Python & bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Datasets and generated event data
+data/events/
+data/raw/
+data/processed/
+*.parquet
+*.feather
+*.h5
+
+# Models and checkpoints
+models/
+*.pt
+*.bin
+*.safetensors
+*.onnx
+
+# Environment variables & secrets
+.env
+*.env
+*.pem
+*.key
+credentials.json
+secrets.json
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Test & coverage artifacts
+.pytest_cache/
+.coverage
+htmlcov/

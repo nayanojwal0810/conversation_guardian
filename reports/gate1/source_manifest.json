@@ -1,0 +1,46 @@
+{
+  "dataset_name": "conversations-gone-awry-corpus",
+  "dataset_source": "Cornell ConvoKit (Zhang et al. ACL 2018)",
+  "acquisition_method": "convokit.download('conversations-gone-awry-corpus')",
+  "corpus_directory": "C:\\Users\\nayan\\.convokit\\saved-corpora\\conversations-gone-awry-corpus",
+  "environment": {
+    "python_version": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]",
+    "convokit_version": "4.1.2",
+    "pandas_version": "3.0.3",
+    "pyarrow_version": "24.0.0"
+  },
+  "files": {
+    "conversations.json": {
+      "size_bytes": 1053900,
+      "sha256": "9764383802e8e98dfa50f8e36132d620490d96a8839fe9d1d702fc3047c9fabc"
+    },
+    "corpus.json": {
+      "size_bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    "index.json": {
+      "size_bytes": 518,
+      "sha256": "238c69dfa9edc7592a563cfa37707cfe91fabc15939c86dea0f4640525ee34f4"
+    },
+    "info.parsed.jsonl": {
+      "size_bytes": 167991767,
+      "sha256": "81d1841322b77b9be88856581a3a17acb40a251a500bca20a7bcc3ac2241c866"
+    },
+    "speakers.json": {
+      "size_bytes": 148208,
+      "sha256": "416924ed87a103d714ec8bc84e0387a3758f3bd704f15ffff41df2c73e12d24c"
+    },
+    "utterances.jsonl": {
+      "size_bytes": 186487825,
+      "sha256": "f9305896cb923d761b0f92ef60c25c91feebdd9384de373f153df6b3f5bda5d3"
+    },
+    "vect_info.prompt_types__prompt_dists.6.keys": {
+      "size_bytes": 535578,
+      "sha256": "c8fd1d2c1af900b60a9e804dd93010e96770173126a2c77046b00b3de2ca0c65"
+    },
+    "vect_info.prompt_types__prompt_dists.6.npy": {
+      "size_bytes": 1202960,
+      "sha256": "88588cbb3870b9f49580cacaedcd66d8a609b70b5e56301a8817af567c3dcba2"
+    }
+  }
+}

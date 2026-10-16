@@ -1,0 +1,10 @@
+checkpoint_n_obs,split,total_conversations_considered,insufficient_observed_prefix,attack_already_observed,positive_event_within_window,negative_event_full_window,censored_incomplete_window,eligible_positives,eligible_negatives,total_eligible_examples,positive_prevalence_pct
+1,train,2508,0,0,199,2150,159,199,2150,2349,8.47
+1,val,840,0,0,56,734,50,56,734,790,7.09
+1,test,840,0,0,75,704,61,75,704,779,9.63
+3,train,2508,0,81,605,1240,582,605,1240,1845,32.79
+3,val,840,0,25,199,426,190,199,426,625,31.84
+3,test,840,0,28,216,400,196,216,400,616,35.06
+5,train,2508,446,243,562,536,721,562,536,1098,51.18
+5,val,840,140,88,201,157,254,201,157,358,56.15
+5,test,840,162,94,173,176,235,173,176,349,49.57
